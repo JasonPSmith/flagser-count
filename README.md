@@ -5,7 +5,7 @@ To install download repository and navigate to flagser-count folder and then run
 ```sh
 git clone https://github.com/sparsehash/sparsehash
 (cd sparsehash && ./configure && make && cd ..)
-g++ src/flagser-count.cpp -o flagser-count -std=c++11 -pthread -lz -I.sparsehash/src/
+g++ src/flagser-count.cpp -o flagser-count -std=c++11 -pthread -lz -I./sparsehash/src/
 ```
 
 To verify that flagser-count has installed correctly run:
