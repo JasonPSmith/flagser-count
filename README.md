@@ -4,7 +4,8 @@ A program for counting directed cliques in directed graphs, adapted from https:/
 To install download repository and navigate to flagser-count folder and then run the following commands:
 ```sh
 git clone https://github.com/sparsehash/sparsehash
-g++ src/flagser-count.cpp -o flagser-count -std=c++11 -pthread -lz -I./src/
+(cd sparsehash && ./configure && make && cd ..)
+g++ src/flagser-count.cpp -o flagser-count -std=c++11 -pthread -lz -I.sparsehash/src/
 ```
 
 To verify that flagser-count has installed correctly run:
