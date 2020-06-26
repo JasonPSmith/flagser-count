@@ -50,10 +50,10 @@ struct parameters_t {
 	std::vector<std::vector<vertex_index_t>> cell_counts;
 	std::vector<vertex_index_t> do_vertices;
 	std::string input_format = "flagser";
-	const char* input_address1;
-	const char* input_address2;
-	const char* vertex_todo;
-	const char* output_address;
+	std::string input_address1;
+	std::string input_address2;
+	std::string vertex_todo;
+	std::string output_address;
 
   //Constructor
 	parameters_t(int argc, char** argv){
