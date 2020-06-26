@@ -7,7 +7,7 @@ git clone https://github.com/sparsehash/sparsehash
 g++ src/flagser-count.cpp -o flagser-count -std=c++11 -pthread -lz -I./src/
 ```
 
-To verify the flagser-count has installed correctly run:
+To verify that flagser-count has installed correctly run:
 
 ```sh
 (cd test && python run_test.py)
