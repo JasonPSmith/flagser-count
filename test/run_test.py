@@ -1,4 +1,5 @@
 from subprocess import Popen, PIPE, STDOUT
+import os
 exec(open('../binary2simplex.py').read())
 #Test example A: checkes basic flagser-count with flagser format
 p = Popen('../flagser-count --in A.flag',shell=True, stdin=PIPE, stdout=PIPE, stderr=PIPE, close_fds=True)
