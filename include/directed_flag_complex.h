@@ -56,7 +56,8 @@ public:
 
     for (auto vertex : possible_next_vertices) {
 			// We can write the cell given by taking the current vertex as the maximal element
-			prefix.push_back(vertex);
+			std::vector<vertex_index_t> current_prefix(prefix);
+			current_prefix.push_back(vertex);
 
 			// And compute the next elements
 			std::vector<vertex_index_t> new_possible_vertices;
@@ -71,7 +72,7 @@ public:
 			}
 
       // Repeat for new possible vertices
-      do_for_each_cell(new_possible_vertices, prefix, prefix_size + 1, thread_id, number_of_vertices);
+      do_for_each_cell(new_possible_vertices, current_prefix, prefix_size + 1, thread_id, number_of_vertices);
 
 			// Print current status of completed vertices in this thread
       if (parameters.progress) { print_status(prefix_size, thread_id, vertex, number_of_vertices); }
