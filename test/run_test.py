@@ -1,11 +1,11 @@
-#ONLY WORKS ON LINUX (TODO FIX)
+#ONLY WORKS ON LINUX (TODO FIX
 from subprocess import Popen, PIPE, STDOUT
 exec(open('../binary2simplex.py').read())
 #Test example A: checkes basic flagser-count with flagser format
 p = Popen('../flagser-count --in A.flag',shell=True, stdin=PIPE, stdout=PIPE, stderr=PIPE, close_fds=True)
 out, err = p.communicate()
 try:
-    if(str(out).split('\\n')[-2] == '-1 5 7 1'):
+    if(out.splitlines()[-1].decode("utf-8") == '-1 5 7 1'):
         print("Example A Correct")
     else:
         print("ERROR: Problem with Example A")
@@ -17,6 +17,7 @@ except:
 p = Popen('../flagser-count --in-format edge-list --in B.edges --size 5 --threads 2 --out B.out --print B',shell=True, stdin=PIPE, stdout=PIPE, stderr=PIPE, close_fds=True)
 out, err = p.communicate()
 try:
+    print(list(open('B.out'))[-1][:-1])
     if(list(open('B.out'))[-1][:-1] == '2 5 9 6') and set([i[:-2] for i in open('B0.simplices')]).union(set([i[:-2] for i in open('B1.simplices')])) == {'3 0 1', '3 1 2', '4 1 2', '3 2 0', '4 0 1', '4 2 0'}:
         print("Example B Correct")
     else:

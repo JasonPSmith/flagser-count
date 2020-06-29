@@ -35,13 +35,13 @@ public:
 		for (size_t index = thread_id; index < do_vertices.size(); index += parameters.parallel_threads)
 			first_position_vertices.push_back(do_vertices[index]);
 
-		vertex_index_t prefix[parameters.max_dimension + 1];
+		std::vector<vertex_index_t> prefix;
 
 		do_for_each_cell(first_position_vertices, prefix, 0, thread_id, do_vertices.size());
 	}
 
   //iterator through cliques finding common neighbours to all current members and adding to clique
-	void do_for_each_cell(const std::vector<vertex_index_t>& possible_next_vertices, vertex_index_t* prefix,
+	void do_for_each_cell(const std::vector<vertex_index_t>& possible_next_vertices, std::vector<vertex_index_t>& prefix,
 	                      unsigned short prefix_size, int thread_id, size_t number_of_vertices) {
 		//Add this simplex to the count
 		if (prefix_size > 0) { parameters.increase_count(prefix_size, thread_id); }
@@ -56,7 +56,7 @@ public:
 
     for (auto vertex : possible_next_vertices) {
 			// We can write the cell given by taking the current vertex as the maximal element
-			prefix[prefix_size] = vertex;
+			prefix.push_back(vertex);
 
 			// And compute the next elements
 			std::vector<vertex_index_t> new_possible_vertices;
@@ -106,7 +106,7 @@ public:
   }
 
 	//Used when --containment flag is inputted
-	void update_containment(unsigned short prefix_size, vertex_index_t* prefix, int thread_id){
+	void update_containment(unsigned short prefix_size, std::vector<vertex_index_t>& prefix, int thread_id){
 	  for(int i = 0; i < prefix_size; i++){
 			//Ensure contain_counts goes up to current dimension and then increase that dimension by 1
 		  while(parameters.contain_counts[thread_id][prefix[i]].size() < prefix_size){
@@ -117,7 +117,7 @@ public:
 	}
 
   //Used when --binary flag is inputted
-  void output_binary(unsigned short prefix_size, vertex_index_t* prefix, int thread_id){
+  void output_binary(unsigned short prefix_size, std::vector<vertex_index_t>& prefix, int thread_id){
 		if(prefix_size > parameters.min_print && prefix_size <= parameters.max_print+1){
 
       std::vector<std::bitset<64>> bits(ceil((double)prefix_size/3));  //Create a vector of 64 bit ints stored as bitsets
@@ -141,7 +141,7 @@ public:
   }
 
 	//Used when --print flag is inputted
-  void output_simplices(unsigned short prefix_size, vertex_index_t* prefix, int thread_id){
+  void output_simplices(unsigned short prefix_size, std::vector<vertex_index_t>& prefix, int thread_id){
     if(prefix_size > 1 && prefix_size > parameters.min_print && prefix_size <= parameters.max_print+1) {
 		  for(int i = 0; i < prefix_size; i++){ parameters.simplices_outstreams[thread_id] << prefix[i] << " "; }
 		  parameters.simplices_outstreams[thread_id] << std::endl;
