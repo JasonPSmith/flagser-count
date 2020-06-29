@@ -1,4 +1,3 @@
-#ONLY WORKS ON LINUX (TODO FIX
 from subprocess import Popen, PIPE, STDOUT
 exec(open('../binary2simplex.py').read())
 #Test example A: checkes basic flagser-count with flagser format
@@ -17,7 +16,6 @@ except:
 p = Popen('../flagser-count --in-format edge-list --in B.edges --size 5 --threads 2 --out B.out --print B',shell=True, stdin=PIPE, stdout=PIPE, stderr=PIPE, close_fds=True)
 out, err = p.communicate()
 try:
-    print(list(open('B.out'))[-1][:-1])
     if(list(open('B.out'))[-1][:-1] == '2 5 9 6') and set([i[:-2] for i in open('B0.simplices')]).union(set([i[:-2] for i in open('B1.simplices')])) == {'3 0 1', '3 1 2', '4 1 2', '3 2 0', '4 0 1', '4 2 0'}:
         print("Example B Correct")
     else:
@@ -33,7 +31,7 @@ try:
     C = set([tuple(i) for i in binary2simplex('C0.binary')]).union(set([tuple(i) for i in binary2simplex('C1.binary')]))
     bin_bool = C == {(3, 0, 2), (4, 0, 1), (4, 0, 1, 2), (4, 0, 2), (0, 1, 2), (3, 0, 1, 2), (3, 0, 1), (4, 1, 2), (3, 1, 2)}
     contain_bool = list(open('C.cliques')) == ['1 4 5 2 \n', '1 4 5 2 \n', '1 4 5 2 \n', '1 3 3 1 \n', '1 3 3 1 \n']
-    if str(out).split('\\n')[-2] == '1 5 9 7 2' and bin_bool and contain_bool:
+    if out.splitlines()[-1].decode("utf-8") == '1 5 9 7 2' and bin_bool and contain_bool:
         print("Example C Correct")
     else:
         print("ERROR: Problem with Example C")
@@ -45,7 +43,7 @@ except:
 p = Popen('../flagser-count --in-format csc --indices D_indices.npy --indptr D_indptr.npy --size 7 --transpose',shell=True, stdin=PIPE, stdout=PIPE, stderr=PIPE, close_fds=True)
 out, err = p.communicate()
 try:
-    if str(out).split('\\n')[-2] == '1855 7 42 210 840 2520 5040 5040':
+    if out.splitlines()[-1].decode("utf-8") == '1855 7 42 210 840 2520 5040 5040':
         print("Example D Correct")
     else:
         print("ERROR: Problem with Example D")
