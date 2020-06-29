@@ -13,6 +13,8 @@ except:
     print(err)
 
 #Test example B: checks edge-list format, out function, print function and parallel threads
+if os.path.exists("B.out"):
+  os.remove("B.out")
 p = Popen('../flagser-count --in-format edge-list --in B.edges --size 5 --threads 2 --out B.out --print B',shell=True, stdin=PIPE, stdout=PIPE, stderr=PIPE, close_fds=True)
 out, err = p.communicate()
 try:
