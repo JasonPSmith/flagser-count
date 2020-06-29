@@ -49,8 +49,6 @@ typedef float value_t;
 //##############################################################################
 // HASH MAPS
 #include <sparsehash/dense_hash_map>
-//#include "/gpfs/bbp.cscs.ch/home/jsmith/sparsehash-master/src/sparsehash/dense_hash_map"
-//#include "/uoa/home/s10js8/sparsehash-master/src/sparsehash/dense_hash_map"
 template <class Key, class T>
 class hash_map : public google::dense_hash_map<Key, T> {
   public:
