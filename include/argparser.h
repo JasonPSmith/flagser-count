@@ -128,6 +128,8 @@ struct parameters_t {
 		if (it_out != named_arguments.end()) {
 			output_address = it_out->second;
 			print_to_file = true;
+			std::ifstream f(output_address);
+			if (f.good()) { std::cerr << "The output file already exists, aborting." << std::endl; exit(-1); }
 		}
 
     //If --binary is included, set boolean and create binary outstreams, one for each thread.

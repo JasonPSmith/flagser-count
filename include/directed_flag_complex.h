@@ -75,7 +75,7 @@ public:
       do_for_each_cell(new_possible_vertices, current_prefix, prefix_size + 1, thread_id, number_of_vertices);
 
 			// Print current status of completed vertices in this thread
-      if (parameters.progress) { print_status(prefix_size, thread_id, vertex, number_of_vertices); }
+      if (parameters.progress) { print_status(prefix_size, vertex, thread_id, number_of_vertices); }
 		}
 	}
 

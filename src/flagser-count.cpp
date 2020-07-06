@@ -47,9 +47,8 @@ template <typename T,typename F> void count_cells(T& graph, parameters_t& parame
 
 	//if --out is given redirect std::cout to print to given file
   std::fstream of;
+	std::streambuf *coutbuf = std::cout.rdbuf();
 	if (parameters.print_to_file) {
-		std::ifstream f(parameters.output_address);
-		if (f.good()) { std::cerr << "The output file already exists, aborting." << std::endl; exit(-1); }
 		of.open(parameters.output_address, std::ios::out);
 		if (of.fail()) { std::cerr << "couldn't open file " << parameters.output_address << std::endl; exit(-1); }
 		std::streambuf* stream_buffer_file = of.rdbuf();
@@ -63,7 +62,10 @@ template <typename T,typename F> void count_cells(T& graph, parameters_t& parame
 	}
 	std::cout << std::endl;
 
-  of.close();
+  //reset std::cout
+	if (parameters.print_to_file) {
+    std::cout.rdbuf(coutbuf);
+	}
 }
 
 int main(int argc, char** argv) {
