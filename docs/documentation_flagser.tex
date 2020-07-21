@@ -149,7 +149,10 @@ The \textit{edge-list} format takes as input a text file by including -{}-in \te
 \subsection{csc}
 Uses scipy csc format, also requires 
 \begin{verbatim}--indices filename1 --indptr filename2\end{verbatim}
-where the two files are numpy arrays in int32 format corresponding to the indices and indptr lists in scipy csc format. Note you can get use csr by using csc and --transpose. WARNING: it is important int32 format is used, this is not checked by flagser-count, and if a different format is used the program will run but may give incorrect results.
+where the two files are numpy arrays in int32 format corresponding to the indices and indptr lists in scipy csc format. WARNING: it is important int32 format is used, this is not checked by flagser-count, and if a different format is used the program will run but may give incorrect results.
+
+\subsection{csr}
+Uses scipy csr format, same input as csc.
 
 \subsection{coo}
 Uses scipy coo format, also requires 
