@@ -29,7 +29,8 @@ public:
 	//Used for flagser format where number of vertices is not known at time of graph construction
 	virtual void set_number_of_vertices(vertex_index_t _number_of_vertices){
 		if(number_of_vertices != _number_of_vertices){
-      number_of_vertices = _number_of_vertices;
+                  number_of_vertices = _number_of_vertices;
+                  incidence_row_length = (_number_of_vertices >> 6) + 1;
 		  incidence_outgoing.resize(incidence_row_length * _number_of_vertices, 0);
 	  }
 	}
