@@ -17,10 +17,10 @@ template <typename T,typename F> void count_cells(T& graph, parameters_t& parame
 	F complex(graph, parameters);
 
 	//Load the vertices to be considered as sources
-	std::vector<vertex_index_t> do_vertices;
+	std::vector<cnpy_t> do_vertices;
 	if (parameters.vertex_todo != "all") {
 			cnpy::NpyArray skip_file = cnpy::npy_load(parameters.vertex_todo);
-			do_vertices = skip_file.as_vec<vertex_index_t>();
+			do_vertices = skip_file.as_vec<cnpy_t>();
 	} else{
 			for(int i = 0; i < graph.vertex_number(); i++){ do_vertices.push_back(i); }
 	}

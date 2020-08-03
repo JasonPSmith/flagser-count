@@ -15,7 +15,7 @@ public:
 	directed_flag_complex_t(directed_graph_t& _graph, parameters_t& _parameters) : graph(_graph), parameters(_parameters) {}
 
   //Create threads
-	void for_each_cell(std::vector<vertex_index_t>& do_vertices) {
+	void for_each_cell(std::vector<cnpy_t>& do_vertices) {
 		std::vector<std::thread> t(parameters.parallel_threads - 1);
 
 		for (size_t index = 0; index < parameters.parallel_threads - 1; ++index)
@@ -27,7 +27,7 @@ public:
 	}
 
   //Assign to each thread the vertices to be considered as source and start the thread computing
-	void worker_thread(int thread_id, std::vector<vertex_index_t>& do_vertices) {
+	void worker_thread(int thread_id, std::vector<cnpy_t>& do_vertices) {
 
 		const size_t vertices_per_thread = graph.vertex_number() / parameters.parallel_threads;
 
