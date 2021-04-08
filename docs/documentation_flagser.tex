@@ -38,9 +38,9 @@
 \maketitle
 
 \noindent
-This is an adapted version of Daniel Lütgehetmann's \textsc{flagser-count} (available \href{https://github.com/luetge/flagser}{here}) for computing 
+This is an adapted version of Daniel Lütgehetmann's \textsc{flagser-count} (available \href{https://github.com/luetge/flagser}{here}) for computing
 the number of directed cliques in a directed graph, or equivalently the simplex counts of the directed flag complex of the graph.
-The main differences from the original flagser-count are: all persistent homology code removed to reduce unnecesary memory usage, 
+The main differences from the original flagser-count are: all persistent homology code removed to reduce unnecesary memory usage,
 a compressed option where the graph is stored by flagser-count in sparse format,
 the ability to read in the graph in sparse format, the functionality to print the simplices in normal form or in a condensed memory efficient form,
 the functionality to print the number of directed cliques each vertex belongs to, and the ability to select which vertices to consider as source vertices of the clique.
@@ -89,8 +89,8 @@ The following \texttt{[options]} exist:
   \item [-{}-max-dim \textit{dim}] the maximal dimension to be computed
   \item [-{}-print \textit{filename}] prints all the simplices to a text file where each line gives a simplex, a file called filename$i$.simplices is created for $i=0,...,number\_of\_threads-1$
   \item [-{}-binary \textit{filename}] prints all the simplices in a condensed binary format, a file called filename$i$.binary is created for $i=0,...,number\_of\_threads-1$.
-  \item [-{}-max-print \textit{dim}] the maximum dimension to be printed (inclusive) when --print or --binary are also called
-  \item [-{}-min-print \textit{dim}] the minimum dimension to be printed (inclusive) when --print or --binary are also called, by default set to 2
+  \item [-{}-max-dim-print \textit{dim}] the maximum dimension to be printed (inclusive) when --print or --binary are also called
+  \item [-{}-min-dim-print \textit{dim}] the minimum dimension to be printed (inclusive) when --print or --binary are also called, by default set to 2
   \item [-{}-size \textit{n}] the number of vertices in the graph, must be given for edge-list, csc and coo formats
   \item [-{}-threads \textit{t}] the number of parallel threads to be used, if not specified $t=8$ is used
   \item [-{}-containment \textit{filename}] prints the number of directed cliques each vertex belongs, where line $i$ in \textit{filename} corresponds to vertex $i$ with the number of cliques it belongs to given for each dimension
@@ -98,7 +98,7 @@ The following \texttt{[options]} exist:
   \item [-{}-compressed] stores the graph in memory in sparse format, slower performance but significantly less memory required
   \item [-{}-transpose] transposes the graph
   \item [-{}-progress] prints the progress of the computation, every time a vertex is finished being considered as a source it prints the current count of that thread and the vertex considered.
-  
+
 \end{description}
 
 \vspace{1em}
@@ -144,10 +144,10 @@ The edges are oriented to point from the first vertex to the second vertex.
 Note the number of vertices on line 1 of the flag file will be the number of vertices used, so -{}-size has no effect when used with flagser format.
 
 \subsection{edge-list}
-The \textit{edge-list} format takes as input a text file by including -{}-in \textit{filename}, where every line of the file has two integers separated by whitespace which reprsents an edge from the first integer to the second. This is equivalent to flagser format with the first three lines removed. 
+The \textit{edge-list} format takes as input a text file by including -{}-in \textit{filename}, where every line of the file has two integers separated by whitespace which reprsents an edge from the first integer to the second. This is equivalent to flagser format with the first three lines removed.
 
 \subsection{csc}
-Uses scipy csc format, also requires 
+Uses scipy csc format, also requires
 \begin{verbatim}--indices filename1 --indptr filename2\end{verbatim}
 where the two files are numpy arrays in int32 format corresponding to the indices and indptr lists in scipy csc format. WARNING: it is important int32 format is used, this is not checked by flagser-count, and if a different format is used the program will run but may give incorrect results.
 
@@ -155,7 +155,7 @@ where the two files are numpy arrays in int32 format corresponding to the indice
 Uses scipy csr format, same input as csc.
 
 \subsection{coo}
-Uses scipy coo format, also requires 
+Uses scipy coo format, also requires
 \begin{verbatim}--row filename1 --col filename2\end{verbatim}
  where the two files are numpy arrays in int32 format corresponding to the row and column lists in scipy coo format, i.e two lists were (row[i],column[i]) is an edge of the graph, for all $i$. WARNING: It is important int32 format is used, this is not checked by flagser-count, and if a different format is used the program will run but may give incorrect results.
 

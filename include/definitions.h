@@ -35,11 +35,11 @@
 //##############################################################################
 // TYPE DEFINTIONS
 #ifndef MANY_VERTICES
-  typedef unsigned short vertex_index_t;
-  typedef int32_t index_t;
+    typedef unsigned short vertex_index_t;
+    typedef int32_t index_t;
 #else
-  typedef uint64_t vertex_index_t;
-  typedef int64_t index_t;
+    typedef uint64_t vertex_index_t;
+    typedef int64_t index_t;
 #endif
 typedef int32_t cnpy_t; //Requires numpy arrays to be given as int32 dtype
 typedef float value_t;
@@ -51,8 +51,8 @@ typedef float value_t;
 #include <sparsehash/dense_hash_map>
 template <class Key, class T>
 class hash_map : public google::dense_hash_map<Key, T> {
-  public:
-	  inline void reserve(size_t hint) { this->resize(hint); }
+    public:
+        inline void reserve(size_t hint) { this->resize(hint); }
 };
 
 
@@ -61,9 +61,9 @@ class hash_map : public google::dense_hash_map<Key, T> {
 // Class for thread safe printing
 class LockIO {
     static pthread_mutex_t *mutex;
-  public:
-    LockIO() { pthread_mutex_lock( mutex ); }
-		~LockIO() { pthread_mutex_unlock( mutex ); }
+    public:
+        LockIO() { pthread_mutex_lock( mutex ); }
+        ~LockIO() { pthread_mutex_unlock( mutex ); }
 };
 
 static pthread_mutex_t* getMutex() {
