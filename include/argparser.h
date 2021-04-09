@@ -14,7 +14,7 @@ const named_arguments_t parse_arguments(int argc, char** argv) {
         arg = arg.substr(2); // remove --
 
         // These flags have no additional data attached
-        if (arg == "transpose" || arg == "compressed" || arg == "progress" || arg== "max-simplices") {
+        if (arg == "transpose" || arg == "compressed" || arg == "progress" || arg == "max-simplices") {
             named_arguments.insert(std::make_pair(arg, "true"));
             continue;
         }
@@ -42,6 +42,7 @@ struct parameters_t {
     bool progress;
     bool compressed;
     bool transpose;
+    int64_t euler_characteristic = 0;
 
     //input output elements
     std::ofstream containment_outstream;
@@ -56,6 +57,9 @@ struct parameters_t {
     std::string input_address2;
     std::string vertex_todo;
     std::string output_address;
+    std::vector<size_t> total_cell_count;
+    std::vector<size_t> total_max_cell_count;
+
 
     //Constructor
     parameters_t(int argc, char** argv){
@@ -80,6 +84,7 @@ struct parameters_t {
         transpose = ((it = named_arguments.find("transpose")) != named_arguments.end());
         progress = ((it = named_arguments.find("progress")) != named_arguments.end());
         max_simplices = ((it = named_arguments.find("max-simplices")) != named_arguments.end());
+        if(max_simplices) {min_dim_print = 0;}
 
         //integer arguments
         if (it_max != named_arguments.end()) { max_dimension = atoi(it_max->second); }
@@ -96,7 +101,6 @@ struct parameters_t {
             std::cerr << "ERROR: Number of vertices n must be inputed with \"--size n\" for formats edge-list, csc and coo." << std::endl;
             exit(-1);
         }
-
         if (input_format == "edge-list") { input_format = "flagser"; }
         if (input_format == "flagser"){
             auto it_file = named_arguments.find("in");

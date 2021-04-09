@@ -166,4 +166,20 @@ When using the -{}-binary the simplices are printed in the following way: Each s
 The size (in bytes) required to print the simplices can be computed, when the simplex counts are known, using the following formula:
 $$ \sum_{i=2}^{d}C_i\left\lceil\frac{i}{3}\right\rceil8$$
 where $C_i$ is the number of simplices in dimension $i$. Assuming we don't print the vertices and edges, which is the default as these are already known.
+
+\section{pyflagsercount}
+\textit{pyflagsercount} is a python wrapper (using pybind11) for flagser-count.
+To use \textit{pyflagsercount}, first ensure it is installed, then open python and load the package with:
+\begin{verbatim}from pyflagsercount import flagser_count\end{verbatim}
+Then simply call:
+\begin{verbatim}X=flagser_count(M)\end{verbatim}
+Where $M$ is the adjacency matrix of the graph to consider as a numpy array.
+
+The function flagser\_count returns a dictionary containing the Euler characteristic (X[euler]) and the cell counts (X['cell\_counts']), along with the maximal cell counts (X['max\_cell\_counts']) and containment counts (X['contain\_counts']), when the max\_simplices or containment option are called, respectively.
+
+All of the optional arguments can also be used with \textit{pyflagsercount} (except -{}-progress), by using them as input arguments in flagser\_count, for example to specify 10 threads call:
+\begin{verbatim}X=flagser_count(M,threads=10)\end{verbatim}
+Or to print the simplices to outfile call:
+\begin{verbatim}X=flagser_count(M,print=`outfile')\end{verbatim}
+
 \end{document}

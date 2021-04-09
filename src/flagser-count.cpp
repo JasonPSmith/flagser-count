@@ -7,11 +7,6 @@
 
 template <typename T,typename F> void count_cells(T& graph, parameters_t& parameters) {
     // Aggregated counts
-    std::vector<size_t> total_cell_count;
-    std::vector<size_t> total_max_cell_count;
-    index_t total_euler_characteristic = 0;
-    size_t total_max_dim = 0;
-
     std::cout << "Done" << std::endl << "Counting Cliques..." << std::endl;
 
     //create the complex object
@@ -32,19 +27,18 @@ template <typename T,typename F> void count_cells(T& graph, parameters_t& parame
     std::cout << "Printing Results." << std::endl;
 
     //Combine counts from each thread and compute Euler Characteristic
-    int64_t euler_characteristic = 0;
     size_t max_dim = 0;
     for (int i = 0; i < parameters.parallel_threads; i++) {
         max_dim = max_dim < parameters.cell_counts[i].size() ? parameters.cell_counts[i].size() : max_dim;
     }
-    total_cell_count.resize(max_dim, 0);
-    total_max_cell_count.resize(max_dim, 0);
+    parameters.total_cell_count.resize(max_dim, 0);
+    parameters.total_max_cell_count.resize(max_dim, 0);
     for (size_t dim = 0; dim < max_dim; dim++) {
-        for (int i = 0; i < parameters.parallel_threads; i++) total_cell_count[dim] += parameters.cell_counts[i].size() > dim ? parameters.cell_counts[i][dim] : 0;
+        for (int i = 0; i < parameters.parallel_threads; i++) parameters.total_cell_count[dim] += parameters.cell_counts[i].size() > dim ? parameters.cell_counts[i][dim] : 0;
         if (parameters.max_simplices) {
-            for (int i = 0; i < parameters.parallel_threads; i++) total_max_cell_count[dim] += parameters.max_cell_counts[i].size() > dim ? parameters.max_cell_counts[i][dim] : 0;
+            for (int i = 0; i < parameters.parallel_threads; i++) parameters.total_max_cell_count[dim] += parameters.max_cell_counts[i].size() > dim ? parameters.max_cell_counts[i][dim] : 0;
         }
-        euler_characteristic += pow(-1,dim)*total_cell_count[dim];
+        parameters.euler_characteristic += pow(-1,dim)*parameters.total_cell_count[dim];
     }
 
     //if --containment is given output contain_count
@@ -61,16 +55,16 @@ template <typename T,typename F> void count_cells(T& graph, parameters_t& parame
     }
 
     //Print results
-    std::cout << "# [euler_characteristic cell_count_dim_0 cell_count_dim_1 ...]" << std::endl << euler_characteristic;
+    std::cout << "# [euler_characteristic cell_count_dim_0 cell_count_dim_1 ...]" << std::endl << parameters.euler_characteristic;
     for (size_t dim = 0; dim < max_dim; dim++) {
-        std::cout << " " << total_cell_count[dim];
+        std::cout << " " << parameters.total_cell_count[dim];
     }
     std::cout << std::endl;
 
     if (parameters.max_simplices) {
         std::cout << std::endl << "# [max_cell_count_dim_0 max_cell_count_dim_1 ...]" << std::endl << " ";
         for (size_t dim = 0; dim < max_dim; dim++) {
-            std::cout << " " << total_max_cell_count[dim];
+            std::cout << " " << parameters.total_max_cell_count[dim];
         }
         std::cout << std::endl;
     }

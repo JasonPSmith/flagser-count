@@ -103,7 +103,7 @@ public:
         }
         if(transpose){ std::swap(v,w); }
         incidence_outgoing[v][w] = true;
-        if (store_incoming){ incidence_outgoing[v][w] = true; }
+        if (store_incoming){ incidence_incoming[w][v] = true; }
     }
 
     virtual bool is_connected_by_an_edge(vertex_index_t from, vertex_index_t to) {

@@ -198,6 +198,31 @@ public:
             new_possible_vertices.push_back(iter->first);
         }
     }
+
+    virtual bool check_is_max(std::vector<vertex_index_t>& prefix) {
+        for (size_t p = 0; p < prefix.size(); p++) {
+            hash_map<vertex_index_t,bool>* out_neigh = graph.get_incoming_chunk(prefix[prefix.size()-1]);
+            for(auto iter = out_neigh->begin(); iter != out_neigh->end(); ++iter){
+                bool go = true;
+                for (size_t i = 0; i < p; i++) {
+                    if (!graph.is_connected_by_an_edge(prefix[i],iter->first)){
+                        go = false;
+                        break;
+                    }
+                }
+                if(go){
+                    for (size_t i = p; i < prefix.size()-1; i++) {
+                        if (!graph.is_connected_by_an_edge(iter->first,prefix[i])){
+                            go = false;
+                            break;
+                        }
+                    }
+                }
+                if (go) return false;
+            }
+        }
+        return true;
+    }
 };
 
 #endif // FLAGSER_DIRECTED_FLAG_COMPLEX_H
