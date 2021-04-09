@@ -1,0 +1,4 @@
+[submodule "pyflagsercount/pybind11"]
+	path = pyflagsercount/pybind11
+	url = https://github.com/pybind/pybind11
+	branch = stable
