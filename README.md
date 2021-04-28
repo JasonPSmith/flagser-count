@@ -24,3 +24,4 @@ To install pyflagsercount, run:
 ```sh
 pip install .
 ```
+Requirements: numpy is a required package for pyflagsercount
