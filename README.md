@@ -3,7 +3,7 @@ A program for counting directed cliques in directed graphs, adapted from https:/
 
 To install download repository with:
 ```sh
-git clone --recursive https://https://github.com/JasonPSmith/flagser-count.git
+git clone --recursive https://github.com/JasonPSmith/flagser-count.git
 ```
 Then install sparsehash with
 ```sh
