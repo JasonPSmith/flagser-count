@@ -5,7 +5,7 @@ To install download repository with:
 ```sh
 git clone --recursive https://github.com/JasonPSmith/flagser-count.git
 ```
-Then install sparsehash with
+From the flagser-count directory install sparsehash with
 ```sh
 (cd sparsehash && ./configure && make && make install && cd ..)
 ```
