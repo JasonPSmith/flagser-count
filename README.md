@@ -25,3 +25,12 @@ To install pyflagsercount, run:
 pip install .
 ```
 Requirements: numpy and pybind11 are required packages for pyflagsercount
+
+If root access is unavailable installation can be done in with the following:
+```sh
+git clone --recursive https://github.com/JasonPSmith/flagser-count.git
+(cd sparsehash && ./configure --prefix=<local_address> && make && make install && cd ..)
+find <local_address> -type f -name "*.h" -print0 | xargs -0 sed -i 's|<sparsehash\(.*\)>|\"<local_address>\1\"|g'
+make
+pip install . --user
+```
