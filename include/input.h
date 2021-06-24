@@ -5,7 +5,6 @@
 #include "argparser.h"
 #include "definitions.h"
 #include "directed_graph.h"
-#include "cnpy.h"
 
 //#############################################################################
 //Functions for parsing strings
@@ -42,6 +41,7 @@ template <typename T> void read_graph_csc(T& graph, parameters_t& parameters) {
 //#############################################################################
 //coo format
 template <typename T> void read_graph_coo(T& graph, parameters_t& parameters) {
+
     cnpy::NpyArray row_file = cnpy::npy_load(parameters.input_address1);
     cnpy::NpyArray col_file = cnpy::npy_load(parameters.input_address2);
     std::vector<cnpy_t> row = row_file.as_vec<cnpy_t>();
@@ -81,17 +81,26 @@ template <typename T> void read_graph_flagser(T& graph, parameters_t& parameters
     }
 }
 
+//#############################################################################
+//csr compressed format
+template <typename T> void read_graph_csr_compressed(T& graph, parameters_t& parameters) {
+    //Load numpy arrays
+    cnpy::NpyArray indices_file = cnpy::npy_load(parameters.input_address1);
+    cnpy::NpyArray indptr_file = cnpy::npy_load(parameters.input_address2);
+    graph.add_edges(indices_file,indptr_file);
+}
 
 
 //#############################################################################
 //Base class
 
 template <typename T> void read_directed_graph(T& graph, parameters_t& parameters) {
-    std::cout <<  "Reading in the graph...";
+    std::cout <<  "Reading in the graph..."<< std::flush;
 
     if (parameters.input_format == "flagser") { read_graph_flagser<T>(graph, parameters); }
     else if (parameters.input_format == "csc") { read_graph_csc<T>(graph, parameters); }
     else if (parameters.input_format == "coo") { read_graph_coo<T>(graph, parameters); }
+    else if (parameters.input_format == "csr") { read_graph_csr_compressed<T>(graph, parameters); }
     else {
         std::cerr << "The input format \"" << parameters.input_format << "\" could not be found." << std::endl;
         exit(1);

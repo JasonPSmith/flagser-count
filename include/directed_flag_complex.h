@@ -225,4 +225,26 @@ public:
     }
 };
 
+
+//#############################################################################
+//csr class
+class csr_directed_flag_complex_t : public directed_flag_complex_t {
+public:
+    csr_directed_graph_t& graph;
+    csr_directed_flag_complex_t(csr_directed_graph_t& _graph, parameters_t& _parameters) : directed_flag_complex_t{ _graph, _parameters }, graph(_graph) {}
+
+    //Get neighbours of vertex and add them to new_possible_vertices
+    virtual void get_new_possible_vertex(vertex_index_t vertex, std::vector<vertex_index_t>& new_possible_vertices) {
+        for(auto iter = graph.get_outgoing_start(vertex); iter != graph.get_outgoing_end(vertex); ++iter){
+            new_possible_vertices.push_back(graph.indices[iter]);
+        }
+    }
+
+    virtual bool check_is_max(std::vector<vertex_index_t>& prefix) {
+      //Can make this work if needed, by getting csc format inputted as well
+      std::cerr << "ERROR: max simplices functionality unavailable for csr compressed." << std::endl;
+      exit(-1);
+    }
+};
+
 #endif // FLAGSER_DIRECTED_FLAG_COMPLEX_H

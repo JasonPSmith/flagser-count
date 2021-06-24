@@ -96,7 +96,7 @@ The following \texttt{[options]} exist:
   \item [-{}-containment \textit{filename}] prints the number of directed cliques each vertex belongs, where line $i$ in \textit{filename} corresponds to vertex $i$ with the number of cliques it belongs to given for each dimension. When used with -{}-max-simplices the number of maximal simplices each vertex belongs to is printed instead.
   \item [-{}-vertices-todo \textit{filename}] select only certain vertices to be considered as source neurons of cliques, input a 32bit numpy array containing the vertices to be considered.
   \item [-{}-max-simplices] also counts the number of maximal simplices, and when used with print, binary or containment it will print the maximal simplices or return the number of maximal simplices each vertex is contained in instead.
-  \item [-{}-compressed] stores the graph in memory in sparse format, slower performance but significantly less memory required
+  \item [-{}-compressed \textit{format}] Format choices are \emph{hash} or \emph{csr}. Enabling this option stores the graph in sparse format, slower performance but significantly less memory required. csr is faster and has more efficient memory usage than hash, but requires the graph be inputted in csr format and the max-simplices functionality does not work with csr compressed.
   \item [-{}-transpose] transposes the graph
   \item [-{}-progress] prints the progress of the computation, every time a vertex is finished being considered as a source it prints the current count of that thread and the vertex considered.
 
@@ -182,4 +182,5 @@ All of the optional arguments can also be used with \textit{pyflagsercount} (exc
 Or to print the simplices to outfile call:
 \begin{verbatim}X=flagser_count(M,print=`outfile')\end{verbatim}
 
+To use compressed version use compressed=True. This will use the has compressed format. (To Do: add csr compressed functionality to pyflagsercount.)
 \end{document}

@@ -14,7 +14,7 @@ const named_arguments_t parse_arguments(int argc, char** argv) {
         arg = arg.substr(2); // remove --
 
         // These flags have no additional data attached
-        if (arg == "transpose" || arg == "compressed" || arg == "progress" || arg == "max-simplices") {
+        if (arg == "transpose" || arg == "progress" || arg == "max-simplices") {
             named_arguments.insert(std::make_pair(arg, "true"));
             continue;
         }
@@ -40,7 +40,7 @@ struct parameters_t {
     bool max_simplices = false;
     bool print_to_file = false;
     bool progress;
-    bool compressed;
+
     bool transpose;
     int64_t euler_characteristic = 0;
 
@@ -53,6 +53,7 @@ struct parameters_t {
     std::vector<std::vector<vertex_index_t>> max_cell_counts;
     std::vector<vertex_index_t> do_vertices;
     std::string input_format = "flagser";
+    std::string compressed;
     std::string input_address1;
     std::string input_address2;
     std::string vertex_todo;
@@ -77,10 +78,10 @@ struct parameters_t {
         auto it_contain = named_arguments.find("containment");
         auto it_max_dim_print = named_arguments.find("max-dim-print");
         auto it_min_dim_print = named_arguments.find("min-dim-print");
+        auto it_compressed = named_arguments.find("compressed");
         named_arguments_t::const_iterator it;
 
         //Arguments with no additional data are given true if they are inputted, otherwise false
-        compressed = ((it = named_arguments.find("compressed")) != named_arguments.end());
         transpose = ((it = named_arguments.find("transpose")) != named_arguments.end());
         progress = ((it = named_arguments.find("progress")) != named_arguments.end());
         max_simplices = ((it = named_arguments.find("max-simplices")) != named_arguments.end());
@@ -92,9 +93,13 @@ struct parameters_t {
         if (it_max_dim_print != named_arguments.end()) { max_dim_print= atoi(it_max_dim_print->second); }
         if (it_min_dim_print != named_arguments.end()) { min_dim_print= atoi(it_min_dim_print->second); }
 
+        //compressed arguments
+        if (it_compressed == named_arguments.end()) { compressed = "false"; }
+        else { compressed = it_compressed->second; }
+
         //input format arguments
         if (it_format != named_arguments.end()) { input_format = it_format->second; }
-        if (input_format == "csr") { input_format = "csc"; transpose = true; }
+        if (input_format == "csr" && compressed != "csr") { input_format = "csc"; transpose = true; }
         if (it_size != named_arguments.end()) {
             number_of_vertices = atoi(it_size->second);
         } else if (input_format == "coo" || input_format == "csc" || input_format == "edge-list" ){
@@ -108,7 +113,7 @@ struct parameters_t {
                 std::cerr << "ERROR: File address must be given for flagser format" << std::endl; exit(-1);
             }
             input_address1 = it_file->second;
-        } else if(input_format == "csc") {
+        } else if(input_format == "csc" || input_format == "csr") {
             auto it_indices = named_arguments.find("indices");
             auto it_indptr = named_arguments.find("indptr");
             if (it_indices == named_arguments.end() || it_indptr == named_arguments.end()) {

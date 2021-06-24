@@ -2,6 +2,7 @@
 #define FLAGSER_DIRECTED_GRAPH_H
 
 #include "definitions.h"
+#include "cnpy.h"
 
 
 //Uncompressed Class
@@ -65,6 +66,7 @@ public:
     virtual size_t get_incoming_chunk(vertex_index_t from, size_t chunk_number) {
         return incidence_incoming[incidence_row_length * from + chunk_number];
     }
+    virtual void add_edges(cnpy::NpyArray indices_file, cnpy::NpyArray indptr_file){}
 };
 
 
@@ -96,6 +98,8 @@ public:
         }
     }
 
+    virtual void add_edges(cnpy::NpyArray indices_file, cnpy::NpyArray indptr_file){}
+
     virtual void add_edge(vertex_index_t v, vertex_index_t w) {
         if(v >= number_of_vertices || w >= number_of_vertices){
             std::cerr << "ERROR: Edge " << v << " " << w << " can't exist, as largest vertex id is " << number_of_vertices-1 << std::endl;
@@ -116,6 +120,38 @@ public:
     }
     virtual hash_map<vertex_index_t,bool>* get_incoming_chunk(vertex_index_t from){
         return &incidence_incoming[from];
+    }
+};
+
+//#############################################################################
+//CSR Class
+//Stores the adjacency matrix in compressed sparse row format
+class csr_directed_graph_t : public directed_graph_t {
+public:
+    std::vector<cnpy_t> indices;
+    std::vector<cnpy_t> indptr;
+    csr_directed_graph_t(vertex_index_t _number_of_vertices)
+      : directed_graph_t{ _number_of_vertices, false, false } {
+    }
+
+    virtual void add_edges(cnpy::NpyArray indices_file, cnpy::NpyArray indptr_file){
+        indices = indices_file.as_vec<cnpy_t>();
+        indptr = indptr_file.as_vec<cnpy_t>();
+    }
+
+    virtual bool is_connected_by_an_edge(vertex_index_t from, vertex_index_t to) {
+        //return std::find(indices.begin()+indptr[from],indices.begin()+indptr[from+1],to) != indices.begin()+indptr[from+1];
+        for(int i = indptr[from]; i < indptr[from+1]; i++){
+            if(indices[i] == to){ return true; }
+        }
+        return false;
+    }
+
+    virtual cnpy_t get_outgoing_start(vertex_index_t from){
+        return indptr[from];
+    }
+    virtual cnpy_t get_outgoing_end(vertex_index_t from){
+        return indptr[from+1];
     }
 };
 
