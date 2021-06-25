@@ -131,7 +131,8 @@ public:
     std::vector<cnpy_t> indices;
     std::vector<cnpy_t> indptr;
     csr_directed_graph_t(vertex_index_t _number_of_vertices)
-      : directed_graph_t{ _number_of_vertices, false, false } {
+      : directed_graph_t{ false, false } {
+        number_of_vertices = _number_of_vertices;
     }
 
     virtual void add_edges(cnpy::NpyArray indices_file, cnpy::NpyArray indptr_file){
