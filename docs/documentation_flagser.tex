@@ -145,12 +145,12 @@ The edges are oriented to point from the first vertex to the second vertex.
 Note the number of vertices on line 1 of the flag file will be the number of vertices used, so -{}-size has no effect when used with flagser format.
 
 \subsection{edge-list}
-The \textit{edge-list} format takes as input a text file by including -{}-in \textit{filename}, where every line of the file has two integers separated by whitespace which reprsents an edge from the first integer to the second. This is equivalent to flagser format with the first three lines removed.
+The \textit{edge-list} format takes as input a text file by including -{}-in \textit{filename}, where every line of the file has two integers separated by whitespace which represents an edge from the first integer to the second. This is equivalent to flagser format with the first three lines removed.
 
 \subsection{csc}
 Uses scipy csc format, also requires
 \begin{verbatim}--indices filename1 --indptr filename2\end{verbatim}
-where the two files are numpy arrays in int32 format corresponding to the indices and indptr lists in scipy csc format. WARNING: it is important int32 format is used, this is not checked by flagser-count, and if a different format is used the program will run but may give incorrect results.
+where the two files are numpy arrays corresponding to the indices and indptr lists in scipy csc format.
 
 \subsection{csr}
 Uses scipy csr format, same input as csc.
@@ -158,8 +158,9 @@ Uses scipy csr format, same input as csc.
 \subsection{coo}
 Uses scipy coo format, also requires
 \begin{verbatim}--row filename1 --col filename2\end{verbatim}
- where the two files are numpy arrays in int32 format corresponding to the row and column lists in scipy coo format, i.e two lists were (row[i],column[i]) is an edge of the graph, for all $i$. WARNING: It is important int32 format is used, this is not checked by flagser-count, and if a different format is used the program will run but may give incorrect results.
+ where the two files are numpy arrays corresponding to the row and column lists in scipy coo format, i.e two lists were (row[i],column[i]) is an edge of the graph, for all $i$.
 
+All inputted numpy arrays should be either uint32 or uint64. Flagser-count will automatically detect which is used. Inputting int32 or int64 is also acceptable. Any other inputted type will throw an error.
 \section{Binary output}
 When using the -{}-binary the simplices are printed in the following way: Each simplex is represented as a sequence of 64 bit integers. With each 64 bit integer representing 3 vertex id's stored in 21bit format. The simplices are ordered from right to left. If the leading bit is 0 this indicates the start of a new simplex. So if $b$ is the binary representation of a 64 bit int, then $b[0]$ indicates whether we start a new simplex, $b[43:64]$, $b[22:43]$ and $b[1:22]$ are the binary representations of the vertex id of the simplex, in that order. So in a 2 dimensional simplex $b[43:64]$ is the source and $b[1:22]$ is the sink and $b[0]=0$. See the included python script binary2simplex.py for code to extract the simplices. The number of vertices must be less than $2^{21}$
 

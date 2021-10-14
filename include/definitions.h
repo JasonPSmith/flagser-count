@@ -41,7 +41,6 @@
     typedef uint64_t vertex_index_t;
     typedef int64_t index_t;
 #endif
-typedef int32_t cnpy_t; //Requires numpy arrays to be given as int32 dtype
 typedef float value_t;
 
 

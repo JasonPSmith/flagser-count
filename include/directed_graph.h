@@ -126,18 +126,18 @@ public:
 //#############################################################################
 //CSR Class
 //Stores the adjacency matrix in compressed sparse row format
-class csr_directed_graph_t : public directed_graph_t {
+template <typename T> class csr_directed_graph_t : public directed_graph_t {
 public:
-    std::vector<cnpy_t> indices;
-    std::vector<cnpy_t> indptr;
+    std::vector<T> indices;
+    std::vector<T> indptr;
     csr_directed_graph_t(vertex_index_t _number_of_vertices)
       : directed_graph_t{ false, false } {
         number_of_vertices = _number_of_vertices;
     }
 
     virtual void add_edges(cnpy::NpyArray indices_file, cnpy::NpyArray indptr_file){
-        indices = indices_file.as_vec<cnpy_t>();
-        indptr = indptr_file.as_vec<cnpy_t>();
+        indices = indices_file.as_vec<T>();
+        indptr = indptr_file.as_vec<T>();
     }
 
     virtual bool is_connected_by_an_edge(vertex_index_t from, vertex_index_t to) {
@@ -148,10 +148,10 @@ public:
         return false;
     }
 
-    virtual cnpy_t get_outgoing_start(vertex_index_t from){
+    virtual T get_outgoing_start(vertex_index_t from){
         return indptr[from];
     }
-    virtual cnpy_t get_outgoing_end(vertex_index_t from){
+    virtual T get_outgoing_end(vertex_index_t from){
         return indptr[from+1];
     }
 };

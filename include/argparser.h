@@ -2,6 +2,7 @@
 #define FLAGSER_ARGPARSER_H
 
 #include "definitions.h"
+#include "cnpy.h"
 
 typedef std::unordered_map<std::string, const char*> named_arguments_t;
 
@@ -40,7 +41,8 @@ struct parameters_t {
     bool max_simplices = false;
     bool print_to_file = false;
     bool progress;
-
+    bool type; //stores whether numpy arrays are 64bit (true) or 32bit (false)
+    bool vertex_todo_type;
     bool transpose;
     int64_t euler_characteristic = 0;
 
@@ -131,10 +133,21 @@ struct parameters_t {
             input_address2 = it_col->second;
         }
 
+        if (input_format == "csr" || input_format == "coo" || input_format == "csc"){
+            type = cnpy::get_dtype(input_address1);
+            if(type !=  cnpy::get_dtype(input_address2)){
+                std::cerr << "ERROR: numpy files are of different dtypes" << std::endl;
+                exit(-1);
+            }
+        }
+
 
         //If --vertices-todo is included save the file address otherwise set so all vertices are considered
-        if (it_todo != named_arguments.end()) { vertex_todo = it_todo->second; }
-        else { vertex_todo = "all";  }
+        if (it_todo != named_arguments.end()) {
+            vertex_todo = it_todo->second;
+            vertex_todo_type = cnpy::get_dtype(vertex_todo);
+        }
+        else { vertex_todo = "all"; vertex_todo_type = 0; }
 
         //if --out is included save the address of the outfile and save that we are not printing to terminal
         if (it_out != named_arguments.end()) {

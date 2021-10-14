@@ -15,20 +15,20 @@ public:
     directed_flag_complex_t(directed_graph_t& _graph, parameters_t& _parameters) : graph(_graph), parameters(_parameters) {}
 
     //Create threads
-    void for_each_cell(std::vector<cnpy_t>& do_vertices) {
+    template <typename T> void for_each_cell(std::vector<T>& do_vertices) {
         std::vector<std::thread> t(parameters.parallel_threads - 1);
 
         for (size_t index = 0; index < parameters.parallel_threads - 1; ++index){
-            t[index] = std::thread(&directed_flag_complex_t::worker_thread, this, index, std::ref(do_vertices));
+            t[index] = std::thread(&directed_flag_complex_t::worker_thread<T>, this, index, std::ref(do_vertices));
         }
 
-        worker_thread(parameters.parallel_threads - 1, do_vertices); // Also do work in this thread, namely the last bit
+        worker_thread<T>(parameters.parallel_threads - 1, do_vertices); // Also do work in this thread, namely the last bit
 
         for (size_t i = 0; i < parameters.parallel_threads - 1; ++i) t[i].join(); // Wait until all threads stopped
     }
 
     //Assign to each thread the vertices to be considered as source and start the thread computing
-    void worker_thread(int thread_id, std::vector<cnpy_t>& do_vertices) {
+    template <typename T> void worker_thread(int thread_id, std::vector<T>& do_vertices) {
 
         const size_t vertices_per_thread = graph.vertex_number() / parameters.parallel_threads;
 
@@ -228,10 +228,10 @@ public:
 
 //#############################################################################
 //csr class
-class csr_directed_flag_complex_t : public directed_flag_complex_t {
+template <typename T> class csr_directed_flag_complex_t : public directed_flag_complex_t {
 public:
-    csr_directed_graph_t& graph;
-    csr_directed_flag_complex_t(csr_directed_graph_t& _graph, parameters_t& _parameters) : directed_flag_complex_t{ _graph, _parameters }, graph(_graph) {}
+    csr_directed_graph_t<T>& graph;
+    csr_directed_flag_complex_t(csr_directed_graph_t<T>& _graph, parameters_t& _parameters) : directed_flag_complex_t{ _graph, _parameters }, graph(_graph) {}
 
     //Get neighbours of vertex and add them to new_possible_vertices
     virtual void get_new_possible_vertex(vertex_index_t vertex, std::vector<vertex_index_t>& new_possible_vertices) {

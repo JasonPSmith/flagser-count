@@ -53,3 +53,16 @@ try:
 except:
     print("Something went wrong with Example D")
     print(err)
+
+#Test example D as 64bit: checks csc format and transpose
+p = Popen('../flagser-count --in-format csc --indices D_indices64.npy --indptr D_indptr64.npy --size 7 --transpose',shell=True, stdin=PIPE, stdout=PIPE, stderr=PIPE, close_fds=True)
+out, err = p.communicate()
+try:
+    if out.splitlines()[-1].decode("utf-8") == '1855 7 42 210 840 2520 5040 5040':
+        print("Example D (64bit) Correct")
+    else:
+        print("ERROR: Problem with Example D (64bit)")
+except:
+    print("Something went wrong with Example D (64bit)")
+    print(err)
+

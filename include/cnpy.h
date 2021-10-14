@@ -52,49 +52,8 @@ namespace cnpy {
     void parse_npy_header(FILE* fp,size_t& word_size, std::vector<size_t>& shape, bool& fortran_order);
     void parse_npy_header(unsigned char* buffer,size_t& word_size, std::vector<size_t>& shape, bool& fortran_order);
     NpyArray npy_load(std::string fname);
+    bool get_dtype(std::string fname);
 
-}
-
-void cnpy::parse_npy_header(unsigned char* buffer,size_t& word_size, std::vector<size_t>& shape, bool& fortran_order) {
-    //std::string magic_string(buffer,6);
-    uint8_t major_version = *reinterpret_cast<uint8_t*>(buffer+6);
-    uint8_t minor_version = *reinterpret_cast<uint8_t*>(buffer+7);
-    uint16_t header_len = *reinterpret_cast<uint16_t*>(buffer+8);
-    std::string header(reinterpret_cast<char*>(buffer+9),header_len);
-
-    size_t loc1, loc2;
-
-    //fortran order
-    loc1 = header.find("fortran_order")+16;
-    fortran_order = (header.substr(loc1,4) == "True" ? true : false);
-
-    //shape
-    loc1 = header.find("(");
-    loc2 = header.find(")");
-
-    std::regex num_regex("[0-9][0-9]*");
-    std::smatch sm;
-    shape.clear();
-
-    std::string str_shape = header.substr(loc1+1,loc2-loc1-1);
-    while(std::regex_search(str_shape, sm, num_regex)) {
-        shape.push_back(std::stoi(sm[0].str()));
-        str_shape = sm.suffix().str();
-    }
-
-    //endian, word size, data type
-    //byte order code | stands for not applicable.
-    //not sure when this applies except for byte array
-    loc1 = header.find("descr")+9;
-    bool littleEndian = (header[loc1] == '<' || header[loc1] == '|' ? true : false);
-    assert(littleEndian);
-
-    //char type = header[loc1+1];
-    //assert(type == map_type(T));
-
-    std::string str_ws = header.substr(loc1+2);
-    loc2 = str_ws.find("'");
-    word_size = atoi(str_ws.substr(0,loc2).c_str());
 }
 
 void cnpy::parse_npy_header(FILE* fp, size_t& word_size, std::vector<size_t>& shape, bool& fortran_order) {
@@ -173,5 +132,31 @@ cnpy::NpyArray cnpy::npy_load(std::string fname) {
     fclose(fp);
     return arr;
 }
+
+//returns 0 if 32 bit and 1 if 64 bit
+bool cnpy::get_dtype(std::string fname){
+    FILE* fp = fopen(fname.c_str(), "rb");
+    if(!fp) throw std::runtime_error("npy_load: Unable to open file "+fname);
+    char buffer[256];
+    size_t res = fread(buffer,sizeof(char),11,fp);
+    if(res != 11)
+        throw std::runtime_error("parse_npy_header: failed fread");
+    std::string header = fgets(buffer,256,fp);
+    assert(header[header.size()-1] == '\n');
+
+    size_t loc1 = header.find("descr");
+    if (loc1 == std::string::npos)
+        throw std::runtime_error("parse_npy_header: failed to find header keyword: 'descr'");
+    loc1 += 9;
+    bool littleEndian = (header[loc1] == '<' || header[loc1] == '|' ? true : false);
+    assert(littleEndian);
+
+    std::string type(1,header[loc1+2]);
+
+    if (type == "8") return 1;
+    if (type == "4") return 0;
+    throw std::runtime_error("ERROR: Inputted numpy file is neither 32 or 64 int.");
+}
+
 
 #endif

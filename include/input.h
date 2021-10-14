@@ -24,12 +24,12 @@ std::vector<vertex_index_t> split(const std::string& s, char delim, const std::f
 
 //#############################################################################
 //csc format
-template <typename T> void read_graph_csc(T& graph, parameters_t& parameters) {
+template <typename T,typename C> void read_graph_csc(T& graph, parameters_t& parameters) {
     //Load numpy arrays
     cnpy::NpyArray indices_file = cnpy::npy_load(parameters.input_address1);
     cnpy::NpyArray indptr_file = cnpy::npy_load(parameters.input_address2);
-    std::vector<cnpy_t> indices = indices_file.as_vec<cnpy_t>();
-    std::vector<cnpy_t> indptr = indptr_file.as_vec<cnpy_t>();
+    std::vector<C> indices = indices_file.as_vec<C>();
+    std::vector<C> indptr = indptr_file.as_vec<C>();
     for(int i = 0; i < indptr.size()-1; i++){
         for(int j = indptr[i]; j < indptr[i+1]; j++){
             graph.add_edge(indices[j],i);
@@ -40,12 +40,12 @@ template <typename T> void read_graph_csc(T& graph, parameters_t& parameters) {
 
 //#############################################################################
 //coo format
-template <typename T> void read_graph_coo(T& graph, parameters_t& parameters) {
+template <typename T,typename C> void read_graph_coo(T& graph, parameters_t& parameters) {
 
     cnpy::NpyArray row_file = cnpy::npy_load(parameters.input_address1);
     cnpy::NpyArray col_file = cnpy::npy_load(parameters.input_address2);
-    std::vector<cnpy_t> row = row_file.as_vec<cnpy_t>();
-    std::vector<cnpy_t> col = col_file.as_vec<cnpy_t>();
+    std::vector<C> row = row_file.as_vec<C>();
+    std::vector<C> col = col_file.as_vec<C>();
 
     if (row.size() != col.size()){
         std::cerr << "ERROR: Row and Column lengths do not match."<< std::endl;
@@ -98,8 +98,14 @@ template <typename T> void read_directed_graph(T& graph, parameters_t& parameter
     std::cout <<  "Reading in the graph..."<< std::flush;
 
     if (parameters.input_format == "flagser") { read_graph_flagser<T>(graph, parameters); }
-    else if (parameters.input_format == "csc") { read_graph_csc<T>(graph, parameters); }
-    else if (parameters.input_format == "coo") { read_graph_coo<T>(graph, parameters); }
+    else if (parameters.input_format == "csc") {
+        if(parameters.type) read_graph_csc<T,uint64_t>(graph, parameters);
+        else read_graph_csc<T,uint32_t>(graph, parameters);
+    }
+    else if (parameters.input_format == "coo") {
+        if(parameters.type) read_graph_coo<T,uint64_t>(graph, parameters);
+        else read_graph_coo<T,uint32_t>(graph, parameters);
+    }
     else if (parameters.input_format == "csr") { read_graph_csr_compressed<T>(graph, parameters); }
     else {
         std::cerr << "The input format \"" << parameters.input_format << "\" could not be found." << std::endl;

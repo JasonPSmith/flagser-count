@@ -13,16 +13,20 @@ template <typename T,typename F> void count_cells(T& graph, parameters_t& parame
     F complex(graph, parameters);
 
     //Load the vertices to be considered as sources
-    std::vector<cnpy_t> do_vertices;
+    std::vector<uint32_t> do_vertices32;
+    std::vector<uint64_t> do_vertices64;
+
     if (parameters.vertex_todo != "all") {
         cnpy::NpyArray skip_file = cnpy::npy_load(parameters.vertex_todo);
-        do_vertices = skip_file.as_vec<cnpy_t>();
+        if(parameters.vertex_todo_type) do_vertices64 = skip_file.as_vec<uint64_t>();
+        else do_vertices32 = skip_file.as_vec<uint32_t>();
     } else{
-        for(int i = 0; i < graph.vertex_number(); i++){ do_vertices.push_back(i); }
+        for(int i = 0; i < graph.vertex_number(); i++){ do_vertices32.push_back(i); }
     }
 
     //Compute the counts
-    complex.for_each_cell(do_vertices);
+    if(parameters.vertex_todo_type) complex.template for_each_cell<uint64_t>(do_vertices64);
+    else complex.template for_each_cell<uint32_t>(do_vertices32);
 
     std::cout << "Printing Results." << std::endl;
 
@@ -79,9 +83,16 @@ int main(int argc, char** argv) {
     parameters_t parameters(argc, argv);
 
     if(parameters.compressed == "csr"){
-       csr_directed_graph_t graph = csr_directed_graph_t(parameters.number_of_vertices);
-       read_directed_graph<csr_directed_graph_t>(graph, parameters);
-       count_cells<csr_directed_graph_t,csr_directed_flag_complex_t>(graph, parameters);
+       if (parameters.type){
+           csr_directed_graph_t<uint64_t> graph = csr_directed_graph_t<uint64_t>(parameters.number_of_vertices);
+           read_directed_graph<csr_directed_graph_t<uint64_t>>(graph, parameters);
+           count_cells<csr_directed_graph_t<uint64_t>,csr_directed_flag_complex_t<uint64_t>>(graph, parameters);
+       } else{
+           csr_directed_graph_t<uint32_t> graph = csr_directed_graph_t<uint32_t>(parameters.number_of_vertices);
+           read_directed_graph<csr_directed_graph_t<uint32_t>>(graph, parameters);
+           count_cells<csr_directed_graph_t<uint32_t>,csr_directed_flag_complex_t<uint32_t>>(graph, parameters);
+
+       }
     } else if(parameters.compressed == "hash"){
        compressed_directed_graph_t graph = compressed_directed_graph_t(parameters.number_of_vertices, parameters.transpose, parameters.max_simplices);
        read_directed_graph<compressed_directed_graph_t>(graph, parameters);
