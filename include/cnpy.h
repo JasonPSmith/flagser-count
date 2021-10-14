@@ -85,7 +85,7 @@ void cnpy::parse_npy_header(FILE* fp, size_t& word_size, std::vector<size_t>& sh
 
     std::string str_shape = header.substr(loc1+1,loc2-loc1-1);
     while(std::regex_search(str_shape, sm, num_regex)) {
-        shape.push_back(std::stoi(sm[0].str()));
+        shape.push_back(std::stol(sm[0].str()));
         str_shape = sm.suffix().str();
     }
 
