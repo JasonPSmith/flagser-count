@@ -18,7 +18,7 @@ PYBIND11_MODULE(pycount, m) {
                                  bool out, char* out_address, bool binary, char* binary_address,
                                  bool set_max_dim, char* max_dim, bool vertices_todo, char* vertices_address,
                                  bool set_max_dim_print, char* max_dim_print, bool set_min_dim_print, char* min_dim_print,
-                                 bool compressed) {
+                                 bool compressed, bool csr, char* indices_address, char* indptr_address) {
     // Save std::cout status
     auto cout_buff = std::cout.rdbuf();
 
@@ -84,6 +84,18 @@ PYBIND11_MODULE(pycount, m) {
             graph.add_edge(edge[0], edge[1]);
         }
         count_cells<directed_graph_t,directed_flag_complex_t>(graph,parameters);
+    } else if(csr){
+        cnpy::NpyArray indices_file = cnpy::npy_load(indices_address);
+        cnpy::NpyArray indptr_file = cnpy::npy_load(indptr_address);
+        if(cnpy::get_dtype(indices_address)){
+            auto graph = csr_directed_graph_t<uint64_t>(num_vertices);
+            graph.add_edges(indices_file,indptr_file);
+            count_cells<csr_directed_graph_t<uint64_t>,csr_directed_flag_complex_t<uint64_t>>(graph,parameters);
+        } else {
+            auto graph = csr_directed_graph_t<uint32_t>(num_vertices);
+            graph.add_edges(indices_file,indptr_file);
+            count_cells<csr_directed_graph_t<uint32_t>,csr_directed_flag_complex_t<uint32_t>>(graph,parameters);
+        }
     } else {
         auto graph = compressed_directed_graph_t(num_vertices, transpose, max_simplices);
         for (auto& edge : edges) {

@@ -62,7 +62,7 @@ class CMakeBuild(build_ext):
 
 setup(
     name='pyflagsercount',
-    version='0.0.1',
+    version='0.0.2',
     author='Jason P. Smith',
     description='A pybind11 wrapper for a version of flagser-count',
     ext_modules=[CMakeExtension('pyflagsercount')],

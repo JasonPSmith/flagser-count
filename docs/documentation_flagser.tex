@@ -184,4 +184,11 @@ Or to print the simplices to outfile call:
 \begin{verbatim}X=flagser_count(M,print=`outfile')\end{verbatim}
 
 To use compressed version use compressed=True. This will use the has compressed format. (To Do: add csr compressed functionality to pyflagsercount.)
+
+The functions \textit{flagser\_count\_edges} and \textit{flagser\_count\_csr} are also available, the option arguments for these are the same as flagser\_count. The required arguments are:
+\begin{verbatim}X=flagser_count_edges(number_of_vertices, list_of_edges)\end{verbatim}
+where the list of edges is a list of pairs with each pair representing an edge, and
+\begin{verbatim}X=flagser_count_csr(number_of_vertices, indices_address, indptr_address)\end{verbatim}
+where indices\_address is a string containing the destination of a numpy file which contains the indices of the matrix when stored as csr format, similarly for indptr\_address.
+
 \end{document}
