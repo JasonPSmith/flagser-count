@@ -5,9 +5,6 @@ To install download repository with:
 ```sh
 git clone --recursive https://github.com/JasonPSmith/flagser-count.git
 ```
-From the flagser-count directory install sparsehash with
-```sh
-(cd sparsehash && ./configure && make && make install && cd ..)
 ```
 Next compile flagser count with
 ```
@@ -24,13 +21,4 @@ To install pyflagsercount, run:
 ```sh
 pip install .
 ```
-Requirements: numpy and pybind11 are required packages for pyflagsercount
-
-If root access is unavailable installation can be done in with the following:
-```sh
-git clone --recursive https://github.com/JasonPSmith/flagser-count.git
-(cd sparsehash && ./configure --prefix=<local_address> && make && make install && cd ..)
-find . -type f -name "*" -print0 | xargs -0 sed -i 's|<sparsehash\(.*\)>|\"<local_address>/include/sparsehash\1\"|g'
-make
-pip install . --user
-```
+Requirements: For pyflagsercount the packages numpy and pybind11 are required, and cmake version ≥ 2.8.12.
