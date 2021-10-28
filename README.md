@@ -5,7 +5,6 @@ To install download repository with:
 ```sh
 git clone --recursive https://github.com/JasonPSmith/flagser-count.git
 ```
-```
 Next compile flagser count with
 ```
 make
