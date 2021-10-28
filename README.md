@@ -1,11 +1,11 @@
 # flagser-count
 A program for counting directed cliques in directed graphs, adapted from https://github.com/luetge/flagser
 
-To install download repository with:
+To install, first download repository with:
 ```sh
 git clone --recursive https://github.com/JasonPSmith/flagser-count.git
 ```
-Next compile flagser count with
+Next, compile flagser count with
 ```
 make
 ```
@@ -16,7 +16,7 @@ To verify that flagser-count has installed correctly run:
 (cd test && python run_test.py && cd ..)
 ```
 
-To install pyflagsercount, run:
+To install pyflagsercount run:
 ```sh
 pip install .
 ```
