@@ -51,7 +51,7 @@ vertex.
 
 \section{Requirements}
 \noindent
-\textsc{flagser-count} requires a C++11 compiler (such as g++) and the sparsehash package available \href{https://github.com/sparsehash/sparsehash}{here}.
+\textsc{flagser-count} requires a C++11 compiler (such as g++) and to install pyflagsercount the pybind11 package is required, available \href{https://github.com/pybind/pybind11}{here}.
 
 
 \section{Compiling the source code}
@@ -59,7 +59,7 @@ vertex.
 To compile using g++: Open the command line, change into the \textsc{flagser} main directory and compile with:
 \vspace{1em}
 
-\begin{verbatim}g++ src/flagser-count.cpp -o flagser-count -std=c++11 -pthread -lz -I<path_to_sparsehash_src>\end{verbatim}
+\begin{verbatim}g++ src/flagser-count.cpp -o flagser-count -std=c++11 -pthread -lz\end{verbatim}
 
 \section{Usage}
 \noindent
@@ -96,7 +96,7 @@ The following \texttt{[options]} exist:
   \item [-{}-containment \textit{filename}] prints the number of directed cliques each vertex belongs, where line $i$ in \textit{filename} corresponds to vertex $i$ with the number of cliques it belongs to given for each dimension. When used with -{}-max-simplices the number of maximal simplices each vertex belongs to is printed instead.
   \item [-{}-vertices-todo \textit{filename}] select only certain vertices to be considered as source neurons of cliques, input a 32bit numpy array containing the vertices to be considered.
   \item [-{}-max-simplices] also counts the number of maximal simplices, and when used with print, binary or containment it will print the maximal simplices or return the number of maximal simplices each vertex is contained in instead.
-  \item [-{}-compressed \textit{format}] Format choices are \emph{hash} or \emph{csr}. Enabling this option stores the graph in sparse format, slower performance but significantly less memory required. csr is faster and has more efficient memory usage than hash, but requires the graph be inputted in csr format and the max-simplices functionality does not work with csr compressed.
+  \item [-{}-compressed] Enabling this option stores the graph in sparse format, slower performance but significantly less memory required. The graph must be inputted in csr (or csc) format, it is then kept in that format for the computations
   \item [-{}-transpose] transposes the graph
   \item [-{}-progress] prints the progress of the computation, every time a vertex is finished being considered as a source it prints the current count of that thread and the vertex considered.
 
@@ -183,7 +183,7 @@ All of the optional arguments can also be used with \textit{pyflagsercount} (exc
 Or to print the simplices to outfile call:
 \begin{verbatim}X=flagser_count(M,print=`outfile')\end{verbatim}
 
-To use compressed version use compressed=True. This will use the has compressed format. (To Do: add csr compressed functionality to pyflagsercount.)
+To use compressed version use compressed=True.
 
 The functions \textit{flagser\_count\_edges} and \textit{flagser\_count\_csr} are also available, the option arguments for these are the same as flagser\_count. The required arguments are:
 \begin{verbatim}X=flagser_count_edges(number_of_vertices, list_of_edges)\end{verbatim}

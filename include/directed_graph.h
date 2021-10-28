@@ -71,59 +71,6 @@ public:
 
 
 //#############################################################################
-//Compressed Class
-//Stores the adjacency matrix as a vector of dense_hash_maps, one for each vertex
-class compressed_directed_graph_t : public directed_graph_t {
-public:
-    std::vector<hash_map<vertex_index_t,bool>> incidence_outgoing;
-    std::vector<hash_map<vertex_index_t,bool>> incidence_incoming;
-    compressed_directed_graph_t(vertex_index_t _number_of_vertices, bool _transpose, bool _max_simplices)
-      : directed_graph_t{ _transpose, _max_simplices } {
-        set_number_of_vertices(_number_of_vertices);
-    }
-
-    virtual void set_number_of_vertices(vertex_index_t _number_of_vertices){
-        if(number_of_vertices != _number_of_vertices){
-            number_of_vertices = _number_of_vertices;
-            incidence_outgoing.clear();
-            if (store_incoming){ incidence_incoming.clear(); }
-            for(int i=0; i < _number_of_vertices; i++){
-                incidence_outgoing.push_back(hash_map<vertex_index_t,bool>());
-                incidence_outgoing[i].set_empty_key(std::numeric_limits<vertex_index_t>::max());
-                if (store_incoming){
-                    incidence_incoming.push_back(hash_map<vertex_index_t,bool>());
-                    incidence_incoming[i].set_empty_key(std::numeric_limits<vertex_index_t>::max());
-                }
-            }
-        }
-    }
-
-    virtual void add_edges(cnpy::NpyArray indices_file, cnpy::NpyArray indptr_file){}
-
-    virtual void add_edge(vertex_index_t v, vertex_index_t w) {
-        if(v >= number_of_vertices || w >= number_of_vertices){
-            std::cerr << "ERROR: Edge " << v << " " << w << " can't exist, as largest vertex id is " << number_of_vertices-1 << std::endl;
-            exit(-1);
-        }
-        if(transpose){ std::swap(v,w); }
-        incidence_outgoing[v][w] = true;
-        if (store_incoming){ incidence_incoming[w][v] = true; }
-    }
-
-    virtual bool is_connected_by_an_edge(vertex_index_t from, vertex_index_t to) {
-        return (incidence_outgoing[from].find(to) != incidence_outgoing[from].end());
-    }
-
-    //returns out neighbours
-    virtual hash_map<vertex_index_t,bool>* get_outgoing_chunk(vertex_index_t from){
-        return &incidence_outgoing[from];
-    }
-    virtual hash_map<vertex_index_t,bool>* get_incoming_chunk(vertex_index_t from){
-        return &incidence_incoming[from];
-    }
-};
-
-//#############################################################################
 //CSR Class
 //Stores the adjacency matrix in compressed sparse row format
 template <typename T> class csr_directed_graph_t : public directed_graph_t {

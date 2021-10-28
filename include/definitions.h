@@ -46,17 +46,6 @@ typedef float value_t;
 
 
 //##############################################################################
-// HASH MAPS
-#include <sparsehash/dense_hash_map>
-template <class Key, class T>
-class hash_map : public google::dense_hash_map<Key, T> {
-    public:
-        inline void reserve(size_t hint) { this->resize(hint); }
-};
-
-
-
-//##############################################################################
 // Class for thread safe printing
 class LockIO {
     static pthread_mutex_t *mutex;

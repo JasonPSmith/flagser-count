@@ -82,7 +82,7 @@ template <typename T,typename F> void count_cells(T& graph, parameters_t& parame
 int main(int argc, char** argv) {
     parameters_t parameters(argc, argv);
 
-    if(parameters.compressed == "csr"){
+    if(parameters.compressed){
        if (parameters.type){
            csr_directed_graph_t<uint64_t> graph = csr_directed_graph_t<uint64_t>(parameters.number_of_vertices);
            read_directed_graph<csr_directed_graph_t<uint64_t>>(graph, parameters);
@@ -93,10 +93,6 @@ int main(int argc, char** argv) {
            count_cells<csr_directed_graph_t<uint32_t>,csr_directed_flag_complex_t<uint32_t>>(graph, parameters);
 
        }
-    } else if(parameters.compressed == "hash"){
-       compressed_directed_graph_t graph = compressed_directed_graph_t(parameters.number_of_vertices, parameters.transpose, parameters.max_simplices);
-       read_directed_graph<compressed_directed_graph_t>(graph, parameters);
-       count_cells<compressed_directed_graph_t,compressed_directed_flag_complex_t>(graph, parameters);
     } else{
         directed_graph_t graph = directed_graph_t(parameters.number_of_vertices, parameters.transpose, parameters.max_simplices);
         read_directed_graph<directed_graph_t>(graph, parameters);

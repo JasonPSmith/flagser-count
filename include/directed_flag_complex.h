@@ -185,48 +185,6 @@ public:
 
 
 //#############################################################################
-//Compressed class
-class compressed_directed_flag_complex_t : public directed_flag_complex_t {
-public:
-    compressed_directed_graph_t& graph;
-    compressed_directed_flag_complex_t(compressed_directed_graph_t& _graph, parameters_t& _parameters) : directed_flag_complex_t{ _graph, _parameters }, graph(_graph) {}
-
-    //Get neighbours of vertex and add them to new_possible_vertices
-    virtual void get_new_possible_vertex(vertex_index_t vertex, std::vector<vertex_index_t>& new_possible_vertices) {
-        hash_map<vertex_index_t,bool>* out_neigh = graph.get_outgoing_chunk(vertex);
-        for(auto iter = out_neigh->begin(); iter != out_neigh->end(); ++iter){
-            new_possible_vertices.push_back(iter->first);
-        }
-    }
-
-    virtual bool check_is_max(std::vector<vertex_index_t>& prefix) {
-        for (size_t p = 0; p < prefix.size(); p++) {
-            hash_map<vertex_index_t,bool>* out_neigh = graph.get_incoming_chunk(prefix[prefix.size()-1]);
-            for(auto iter = out_neigh->begin(); iter != out_neigh->end(); ++iter){
-                bool go = true;
-                for (size_t i = 0; i < p; i++) {
-                    if (!graph.is_connected_by_an_edge(prefix[i],iter->first)){
-                        go = false;
-                        break;
-                    }
-                }
-                if(go){
-                    for (size_t i = p; i < prefix.size()-1; i++) {
-                        if (!graph.is_connected_by_an_edge(iter->first,prefix[i])){
-                            go = false;
-                            break;
-                        }
-                    }
-                }
-                if (go) return false;
-            }
-        }
-        return true;
-    }
-};
-
-
-//#############################################################################
 //csr class
 template <typename T> class csr_directed_flag_complex_t : public directed_flag_complex_t {
 public:
