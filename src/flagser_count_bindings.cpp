@@ -13,7 +13,7 @@ PYBIND11_MODULE(pycount, m) {
   m.doc() = "Python interface for flagser-count";
 
   m.def("run_flagser_count", [](int num_vertices, std::vector<std::vector<value_t>>& edges,
-                                 bool max_simplices, bool containment, char* contain_address,
+                                 bool max_simplices, bool containment,
                                  bool print, char* print_address, char* threads, bool transpose,
                                  bool out, char* out_address, bool binary, char* binary_address,
                                  bool set_max_dim, char* max_dim, bool vertices_todo, char* vertices_address,
@@ -52,7 +52,7 @@ PYBIND11_MODULE(pycount, m) {
     if (transpose) { argv.push_back((char*)"--transpose"); }
     if (containment){
         argv.push_back((char*)"--containment");
-        argv.push_back(contain_address);
+        argv.push_back("true");
     }
     if (print){
         argv.push_back((char*)"--print");
@@ -71,6 +71,8 @@ PYBIND11_MODULE(pycount, m) {
         argv.push_back(vertices_address);
     }
 
+    argv.push_back((char*)"--python");
+    argv.push_back("true");
 
     parameters_t parameters(argv.size(), argv.data());
 
@@ -105,7 +107,7 @@ PYBIND11_MODULE(pycount, m) {
     output["euler"] = parameters.euler_characteristic;
     output["cell_counts"] = parameters.total_cell_count;
     if(parameters.max_simplices){output["max_cell_counts"] = parameters.total_max_cell_count;}
-    if(parameters.print_containment){output["contain_counts"] = parameters.contain_counts;}
+    if(parameters.print_containment){output["contain_counts"] = parameters.contain_counts[0];}
 
     return output;
   });

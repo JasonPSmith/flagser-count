@@ -176,14 +176,14 @@ Then simply call:
 \begin{verbatim}X=flagser_count(M)\end{verbatim}
 Where $M$ is the adjacency matrix of the graph to consider as a numpy array.
 
-The function flagser\_count returns a dictionary containing the Euler characteristic (X[euler]) and the cell counts (X['cell\_counts']), along with the maximal cell counts (X['max\_cell\_counts']) and containment counts (X['contain\_counts']), when the max\_simplices or containment option are called, respectively.
+The function flagser\_count returns a dictionary containing the Euler characteristic (X['euler']) and the cell counts (X['cell\_counts']), along with the maximal cell counts (X['max\_cell\_counts']) and containment counts (X['contain\_counts']), when the max\_simplices or containment option are called, respectively.
 
 All of the optional arguments can also be used with \textit{pyflagsercount} (except -{}-progress), by using them as input arguments in flagser\_count, for example to specify 10 threads call:
 \begin{verbatim}X=flagser_count(M,threads=10)\end{verbatim}
 Or to print the simplices to outfile call:
 \begin{verbatim}X=flagser_count(M,print=`outfile')\end{verbatim}
 
-To use compressed version use compressed=True.
+To use compressed version use compressed=True. To return containment values use containment=True, the containment values will be returned in the dictionary and will not be printed to a file.
 
 The functions \textit{flagser\_count\_edges} and \textit{flagser\_count\_csr} are also available, the option arguments for these are the same as flagser\_count. The required arguments are:
 \begin{verbatim}X=flagser_count_edges(number_of_vertices, list_of_edges)\end{verbatim}

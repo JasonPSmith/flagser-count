@@ -46,6 +46,7 @@ struct parameters_t {
     bool transpose;
     int64_t euler_characteristic = 0;
     bool compressed;
+    bool python;
 
     //input output elements
     std::ofstream containment_outstream;
@@ -87,6 +88,7 @@ struct parameters_t {
         progress = ((it = named_arguments.find("progress")) != named_arguments.end());
         max_simplices = ((it = named_arguments.find("max-simplices")) != named_arguments.end());
         compressed = ((it = named_arguments.find("compressed")) != named_arguments.end());
+        python = ((it = named_arguments.find("python")) != named_arguments.end());
         if(max_simplices) {min_dim_print = 0;}
 
         //integer arguments
@@ -176,7 +178,7 @@ struct parameters_t {
             }
             contain_counts.assign(parallel_threads, std::vector<std::vector<vertex_index_t>>(number_of_vertices, std::vector<vertex_index_t>(0)));
             print_containment = true;
-            containment_outstream = std::ofstream(it_contain->second);
+            if(!python){ containment_outstream = std::ofstream(it_contain->second); }
         }
         cell_counts.assign(parallel_threads, std::vector<vertex_index_t>(0));
         if (max_simplices) { max_cell_counts.assign(parallel_threads, std::vector<vertex_index_t>(0)); }
@@ -198,11 +200,13 @@ struct parameters_t {
             }
         }
         //print containment values
-        for(int i = 0; i < contain_counts[0].size(); i++){
-            for(int j = 0; j < contain_counts[0][i].size(); j++){
-                containment_outstream << contain_counts[0][i][j] << " ";
+        if(!python){
+            for(int i = 0; i < contain_counts[0].size(); i++){
+                for(int j = 0; j < contain_counts[0][i].size(); j++){
+                    containment_outstream << contain_counts[0][i][j] << " ";
+                }
+                containment_outstream << std::endl;
             }
-            containment_outstream << std::endl;
         }
     }
     //increase simplex count
