@@ -52,7 +52,7 @@ PYBIND11_MODULE(pycount, m) {
     if (transpose) { argv.push_back((char*)"--transpose"); }
     if (containment){
         argv.push_back((char*)"--containment");
-        argv.push_back("true");
+        argv.push_back((char*)"true");
     }
     if (print){
         argv.push_back((char*)"--print");
@@ -72,7 +72,7 @@ PYBIND11_MODULE(pycount, m) {
     }
 
     argv.push_back((char*)"--python");
-    argv.push_back("true");
+    argv.push_back((char*)"true");
 
     parameters_t parameters(argv.size(), argv.data());
 
