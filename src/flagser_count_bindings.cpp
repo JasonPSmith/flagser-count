@@ -14,7 +14,7 @@ PYBIND11_MODULE(pycount, m) {
 
   m.def("run_flagser_count", [](int num_vertices, std::vector<std::vector<value_t>>& edges,
                                  bool max_simplices, bool containment,
-                                 bool print, char* print_address, char* threads, bool transpose,
+                                 bool return_simplices, bool print, char* print_address, char* threads, bool transpose,
                                  bool out, char* out_address, bool binary, char* binary_address,
                                  bool set_max_dim, char* max_dim, bool vertices_todo, char* vertices_address,
                                  bool set_max_dim_print, char* max_dim_print, bool set_min_dim_print, char* min_dim_print,
@@ -52,6 +52,10 @@ PYBIND11_MODULE(pycount, m) {
     if (transpose) { argv.push_back((char*)"--transpose"); }
     if (containment){
         argv.push_back((char*)"--containment");
+        argv.push_back((char*)"true");
+    }
+    if (return_simplices){
+        argv.push_back((char*)"--return_simplices");
         argv.push_back((char*)"true");
     }
     if (print){
@@ -108,6 +112,7 @@ PYBIND11_MODULE(pycount, m) {
     output["cell_counts"] = parameters.total_cell_count;
     if(parameters.max_simplices){output["max_cell_counts"] = parameters.total_max_cell_count;}
     if(parameters.print_containment){output["contain_counts"] = parameters.contain_counts[0];}
+    if(parameters.return_simplices){output["simplices"] = parameters.simplex_lists[0];}
 
     return output;
   });

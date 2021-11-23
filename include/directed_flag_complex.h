@@ -50,7 +50,8 @@ public:
             if (possible_next_vertices.size() == 0){
                 if (parameters.max_simplices){
                     if (check_is_max(prefix)){
-                        if (parameters.print_simplices) output_simplices(prefix_size, prefix, thread_id);
+                        if (parameters.print_simplices) write_simplices(prefix_size, prefix, thread_id);
+                        if (parameters.return_simplices) update_simplices(prefix_size, prefix, thread_id);
                         if (parameters.print_binary) output_binary(prefix_size, prefix, thread_id);
                         if (parameters.print_containment) update_containment(prefix_size, prefix, thread_id);
                         parameters.increase_max_count(prefix_size, thread_id);
@@ -62,7 +63,8 @@ public:
 
         // If we require all simplices printed, then print this simplex now
         if (!parameters.max_simplices){
-              if (parameters.print_simplices) output_simplices(prefix_size, prefix, thread_id);
+              if (parameters.print_simplices) write_simplices(prefix_size, prefix, thread_id);
+              if (parameters.return_simplices) update_simplices(prefix_size, prefix, thread_id);
               if (parameters.print_binary) output_binary(prefix_size, prefix, thread_id);
               if (parameters.print_containment) update_containment(prefix_size, prefix, thread_id);
         }
@@ -174,11 +176,19 @@ public:
         }
     }
 
-  //Used when --print flag is inputted
-    void output_simplices(unsigned short prefix_size, std::vector<vertex_index_t>& prefix, int thread_id){
+    //Used when --print flag is inputted
+    void write_simplices(unsigned short prefix_size, std::vector<vertex_index_t>& prefix, int thread_id){
         if(prefix_size > 1 && prefix_size > parameters.min_dim_print && prefix_size <= parameters.max_dim_print+1) {
             for(int i = 0; i < prefix_size; i++){ parameters.simplices_outstreams[thread_id] << prefix[i] << " "; }
             parameters.simplices_outstreams[thread_id] << std::endl;
+        }
+    }
+    void update_simplices(unsigned short prefix_size, std::vector<vertex_index_t> prefix, int thread_id){
+        if(prefix_size > 1 && prefix_size > parameters.min_dim_print && prefix_size <= parameters.max_dim_print+1) {
+            if(parameters.simplex_lists[thread_id].size() < prefix_size){
+                parameters.simplex_lists[thread_id].resize(prefix_size);
+            }
+            parameters.simplex_lists[thread_id][prefix_size-1].push_back(prefix);
         }
     }
 };

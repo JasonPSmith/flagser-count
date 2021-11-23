@@ -40,6 +40,7 @@ struct parameters_t {
     bool print_containment = false;
     bool max_simplices = false;
     bool print_to_file = false;
+    bool return_simplices = false;
     bool progress;
     bool type; //stores whether numpy arrays are 64bit (true) or 32bit (false)
     bool vertex_todo_type;
@@ -55,6 +56,7 @@ struct parameters_t {
     std::vector<std::vector<std::vector<vertex_index_t>>> contain_counts;
     std::vector<std::vector<vertex_index_t>> cell_counts;
     std::vector<std::vector<vertex_index_t>> max_cell_counts;
+    std::vector<std::vector<std::vector<std::vector<vertex_index_t>>>> simplex_lists;
     std::vector<vertex_index_t> do_vertices;
     std::string input_format = "flagser";
     std::string input_address1;
@@ -89,6 +91,7 @@ struct parameters_t {
         max_simplices = ((it = named_arguments.find("max-simplices")) != named_arguments.end());
         compressed = ((it = named_arguments.find("compressed")) != named_arguments.end());
         python = ((it = named_arguments.find("python")) != named_arguments.end());
+        return_simplices = ((it = named_arguments.find("return_simplices")) != named_arguments.end());
         if(max_simplices) {min_dim_print = 0;}
 
         //integer arguments
@@ -170,6 +173,9 @@ struct parameters_t {
                 simplices_outstreams.push_back(std::ofstream(it_print->second+std::to_string(i)+".simplices"));
             }
         }
+        if (return_simplices) {
+            simplex_lists.assign(parallel_threads, std::vector<std::vector<std::vector<vertex_index_t>>>(0));
+        }
 
         //If --containment, set boolean and create vectors to store the counts, one for each thread and each vertex
         if (it_contain != named_arguments.end()) {
@@ -184,7 +190,23 @@ struct parameters_t {
         if (max_simplices) { max_cell_counts.assign(parallel_threads, std::vector<vertex_index_t>(0)); }
     } //end constructor
 
-
+    void output_simplices(){
+        //combine results from different threads and put in simplex_lists[0]
+        //First resize simplex_lists[0][j] to the correct length
+        if (max_simplices){
+            simplex_lists[0].resize(total_max_cell_count.size());
+            for(int i = 0; i < total_max_cell_count.size(); i++){ simplex_lists[0][i].reserve(total_max_cell_count[i]); }
+        } else {
+            simplex_lists[0].resize(total_cell_count.size());
+            for(int i = 0; i < total_cell_count.size(); i++){ simplex_lists[0][i].reserve(total_cell_count[i]); }
+        }
+        //Second add all simplices to simplex_lists[0]
+        for(int i = 1; i < simplex_lists.size(); i++){
+            for(int j = 0; j < simplex_lists[i].size(); j++){
+                simplex_lists[0][j].insert(simplex_lists[0][j].end(), simplex_lists[i][j].begin(), simplex_lists[i][j].end());
+            }
+        }
+    }
 
     // function for printing containment values
     void output_containment(){

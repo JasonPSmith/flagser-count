@@ -47,6 +47,7 @@ template <typename T,typename F> void count_cells(T& graph, parameters_t& parame
 
     //if --containment is given output contain_count
     if (parameters.print_containment) { parameters.output_containment(); }
+    if (parameters.return_simplices) { parameters.output_simplices(); }
 
     //if --out is given redirect std::cout to print to given file
     std::fstream of;
