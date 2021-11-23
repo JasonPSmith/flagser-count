@@ -204,6 +204,7 @@ struct parameters_t {
         for(int i = 1; i < simplex_lists.size(); i++){
             for(int j = 0; j < simplex_lists[i].size(); j++){
                 simplex_lists[0][j].insert(simplex_lists[0][j].end(), simplex_lists[i][j].begin(), simplex_lists[i][j].end());
+                simplex_lists[i][j].clear();
             }
         }
     }
