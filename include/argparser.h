@@ -102,7 +102,7 @@ struct parameters_t {
 
         //input format arguments
         if (it_format != named_arguments.end()) { input_format = it_format->second; }
-        if (input_format == "csr" && compressed) { input_format = "csc"; transpose = true; }
+        if (input_format == "csr" && !compressed) { input_format = "csc"; transpose = true; }
         if (it_size != named_arguments.end()) {
             number_of_vertices = atoi(it_size->second);
         } else if (input_format == "coo" || input_format == "csc" || input_format == "edge-list" ){
