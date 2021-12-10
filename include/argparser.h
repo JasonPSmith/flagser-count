@@ -15,7 +15,7 @@ const named_arguments_t parse_arguments(int argc, char** argv) {
         arg = arg.substr(2); // remove --
 
         // These flags have no additional data attached
-        if (arg == "transpose" || arg == "progress" || arg == "max-simplices") {
+        if (arg == "transpose" || arg == "progress" || arg == "max-simplices" || arg == "compressed") {
             named_arguments.insert(std::make_pair(arg, "true"));
             continue;
         }
