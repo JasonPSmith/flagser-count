@@ -103,6 +103,10 @@ struct parameters_t {
         //input format arguments
         if (it_format != named_arguments.end()) { input_format = it_format->second; }
         if (input_format == "csr" && !compressed) { input_format = "csc"; transpose = true; }
+        if (compressed && input_format != "csr") {
+            std::cerr << "ERROR: When using \"--compressed\", input format must be csr" << std::endl;
+            exit(-1);
+        }
         if (it_size != named_arguments.end()) {
             number_of_vertices = atoi(it_size->second);
         } else if (input_format == "coo" || input_format == "csc" || input_format == "edge-list" ){
