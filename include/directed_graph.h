@@ -89,7 +89,7 @@ public:
 
     virtual bool is_connected_by_an_edge(vertex_index_t from, vertex_index_t to) {
         //return std::find(indices.begin()+indptr[from],indices.begin()+indptr[from+1],to) != indices.begin()+indptr[from+1];
-        for(int i = indptr[from]; i < indptr[from+1]; i++){
+        for(vertex_index_t i = indptr[from]; i < indptr[from+1]; i++){
             if(indices[i] == to){ return true; }
         }
         return false;

@@ -29,11 +29,11 @@ const named_arguments_t parse_arguments(int argc, char** argv) {
 //A structure that contains all the inputted data, and stores the results
 struct parameters_t {
     unsigned short min_dimension = 0;
-    unsigned short max_dimension = std::numeric_limits<unsigned short>::max();
+    unsigned short max_dimension = std::numeric_limits<unsigned short>::max()-1;
     unsigned short parallel_threads = 8;
     vertex_index_t number_of_vertices = 0;
-    unsigned short min_dim_print = 2;                                          //inclusive
-    unsigned short max_dim_print = std::numeric_limits<unsigned short>::max(); //inclusive
+    unsigned short min_dim_print = 2;                                            //inclusive
+    unsigned short max_dim_print = std::numeric_limits<unsigned short>::max()-1; //inclusive
     size_t vertices_completed = 0;
     bool print_simplices = false;
     bool print_binary = false;
