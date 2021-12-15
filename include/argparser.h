@@ -34,6 +34,7 @@ struct parameters_t {
     vertex_index_t number_of_vertices = 0;
     unsigned short min_dim_print = 2;                                            //inclusive
     unsigned short max_dim_print = std::numeric_limits<unsigned short>::max()-1; //inclusive
+    unsigned short expected_max_dim = 0;
     size_t vertices_completed = 0;
     bool print_simplices = false;
     bool print_binary = false;
@@ -83,6 +84,7 @@ struct parameters_t {
         auto it_contain = named_arguments.find("containment");
         auto it_max_dim_print = named_arguments.find("max-dim-print");
         auto it_min_dim_print = named_arguments.find("min-dim-print");
+        auto it_exp_max_dim = named_arguments.find("est-max-dim");
         named_arguments_t::const_iterator it;
 
         //Arguments with no additional data are given true if they are inputted, otherwise false
@@ -97,8 +99,9 @@ struct parameters_t {
         //integer arguments
         if (it_max != named_arguments.end()) { max_dimension = atoi(it_max->second); }
         if (it_threads != named_arguments.end()) { parallel_threads = atoi(it_threads->second); }
-        if (it_max_dim_print != named_arguments.end()) { max_dim_print= atoi(it_max_dim_print->second); }
-        if (it_min_dim_print != named_arguments.end()) { min_dim_print= atoi(it_min_dim_print->second); }
+        if (it_max_dim_print != named_arguments.end()) { max_dim_print = atoi(it_max_dim_print->second); }
+        if (it_min_dim_print != named_arguments.end()) { min_dim_print = atoi(it_min_dim_print->second); }
+        if (it_exp_max_dim != named_arguments.end()) { expected_max_dim = atoi(it_exp_max_dim->second)+1; }
 
         //input format arguments
         if (it_format != named_arguments.end()) { input_format = it_format->second; }
@@ -186,12 +189,12 @@ struct parameters_t {
             if (it_size == named_arguments.end()) {
                 std::cerr << "ERROR: Number of vertices n must be inputed with \"--size n\" when using --containment" << std::endl;exit(-1);
             }
-            contain_counts.assign(parallel_threads, std::vector<std::vector<vertex_index_t>>(number_of_vertices, std::vector<vertex_index_t>(0)));
+            contain_counts.assign(parallel_threads, std::vector<std::vector<vertex_index_t>>(number_of_vertices, std::vector<vertex_index_t>(expected_max_dim)));
             print_containment = true;
             if(!python){ containment_outstream = std::ofstream(it_contain->second); }
         }
-        cell_counts.assign(parallel_threads, std::vector<vertex_index_t>(0));
-        if (max_simplices) { max_cell_counts.assign(parallel_threads, std::vector<vertex_index_t>(0)); }
+        cell_counts.assign(parallel_threads, std::vector<vertex_index_t>(expected_max_dim));
+        if (max_simplices) { max_cell_counts.assign(parallel_threads, std::vector<vertex_index_t>(expected_max_dim)); }
     } //end constructor
 
     void output_simplices(){
