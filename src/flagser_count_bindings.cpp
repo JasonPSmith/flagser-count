@@ -19,7 +19,7 @@ PYBIND11_MODULE(pycount, m) {
                                  bool set_max_dim, char* max_dim, bool vertices_todo, char* vertices_address,
                                  bool set_max_dim_print, char* max_dim_print, bool set_min_dim_print, char* min_dim_print,
                                  bool compressed, bool npy, char* indices_address, char* indptr_address,
-                                 std::vector<uint32_t> indices, std::vector<uint32_t> indptr) {
+                                 std::vector<uint32_t> indices, std::vector<uint32_t> indptr, bool set_est_max_dim, char* est_max_dim) {
     // Save std::cout status
     auto cout_buff = std::cout.rdbuf();
 
@@ -74,6 +74,10 @@ PYBIND11_MODULE(pycount, m) {
     if (vertices_todo){
         argv.push_back((char*)"--vertices-todo");
         argv.push_back(vertices_address);
+    }
+    if (set_est_max_dim){
+        argv.push_back((char*)"--est-max-dim");
+        argv.push_back(est_max_dim);
     }
 
     argv.push_back((char*)"--python");
