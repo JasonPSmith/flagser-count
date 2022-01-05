@@ -30,8 +30,6 @@ public:
     //Assign to each thread the vertices to be considered as source and start the thread computing
     template <typename T> void worker_thread(int thread_id, std::vector<T>& do_vertices) {
 
-        const size_t vertices_per_thread = graph.vertex_number() / parameters.parallel_threads;
-
         std::vector<vertex_index_t> first_position_vertices;
         for (size_t index = thread_id; index < do_vertices.size(); index += parameters.parallel_threads){
             first_position_vertices.push_back(do_vertices[index]);
@@ -42,9 +40,27 @@ public:
         do_for_each_cell(first_position_vertices, prefix, 0, thread_id, do_vertices.size());
     }
 
+    //Assign to each thread the vertices to be considered as source and start the thread computing
+    void worker_thread_individ(int thread_id, vertex_index_t the_vertex, std::vector<vertex_index_t>& do_vertices) {
+
+        std::vector<vertex_index_t> second_position_vertices;
+        for (vertex_index_t index = thread_id; index < do_vertices.size(); index += parameters.parallel_threads){
+            std::vector<vertex_index_t> prefix = {the_vertex, do_vertices[index]};
+            std::vector<vertex_index_t> new_possible_vertices;
+            for (auto v : do_vertices) {
+                if (do_vertices[index] != v && graph.is_connected_by_an_edge(do_vertices[index], v)) {
+                    new_possible_vertices.push_back(v);
+                }
+            }
+            do_for_each_cell(new_possible_vertices, prefix, 2, thread_id, do_vertices.size());
+            print_status(0, do_vertices[index], thread_id, do_vertices.size());
+        }
+    }
+
     //iterator through cliques finding common neighbours to all current members and adding to clique
     void do_for_each_cell(const std::vector<vertex_index_t>& possible_next_vertices, std::vector<vertex_index_t>& prefix,
                         unsigned short prefix_size, int thread_id, size_t number_of_vertices) {
+
     //Add this simplex to the count
         if (prefix_size > 0) {
             if (possible_next_vertices.size() == 0){

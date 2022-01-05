@@ -169,6 +169,26 @@ The size (in bytes) required to print the simplices can be computed, when the si
 $$ \sum_{i=2}^{d}C_i\left\lceil\frac{i}{3}\right\rceil8$$
 where $C_i$ is the number of simplices in dimension $i$. Assuming we don't print the vertices and edges, which is the default as these are already known.
 
+
+\section{progress}
+The -{}-progress flag returns the counts computed on each thread so far after consider each vertex.
+For example calling \begin{verbatim}
+./flagser-count --in-format coo --row ./test/C_row.npy --col ./test/C_col.npy --size 5 
+                --threads 2 --progress 
+\end{verbatim}
+Gives the output:
+\begin{verbatim}
+1 : thread 1 : 1 1  : 1/5
+3 : thread 1 : 2 4 3 1  : 2/5
+0 : thread 0 : 1 2 1  : 3/5
+2 : thread 0 : 2 2 1  : 4/5
+4 : thread 0 : 3 5 4 1  : 5/5
+\end{verbatim}
+where the first element is the gid of the vertex which has just finished computing, the second entry is the thread it was computed on, the third entry is the current count on that thread, and the final entry is the number of neighbours that have finished computing. 
+
+So to get the counts for which vertex 3 is the source you take the third entry of the line `3 : thread 1 : 2 4 3 1  : 2/5', which is 2 4 3 1, and subtract from it the counts for the last time before that thread 1 appears which is the line `1 : thread 1 : 1 1  : 1/5', thus the counts for vertex 3 as source are 1 3 3 1.
+
+
 \section{pyflagsercount}
 \textit{pyflagsercount} is a python wrapper (using pybind11) for flagser-count.
 To use \textit{pyflagsercount}, first ensure it is installed, then open python and load the package with:
@@ -193,5 +213,16 @@ The functions \textit{flagser\_count\_edges} and \textit{flagser\_count\_csr} ar
 where the list of edges is a list of pairs with each pair representing an edge, and
 \begin{verbatim}X=flagser_count_csr(number_of_vertices, indices_address, indptr_address)\end{verbatim}
 where indices\_address is a string containing the destination of a numpy file which contains the indices of the matrix when stored as csr format, similarly for indptr\_address.
+
+\section{flagser-count-individ}
+A version of flagser that has a required input -{}-vertex v, and computes all simplices in the graph for which $v$ is the source. Will return the same value as calling flagser-count where vertices\_todo contains the single vertex v. However, this version will consider each neighbour of $v$ on a separate thread, whereas using flagser-count will use a single thread for the whole computation. This is useful when considering vertices with very high out degree. Accepts all the same flags as flagser-count listed above. 
+
+The -{}-progress flag will return something similar as that for flagser-count, except the first entry is the neighbour of $v$ that has finished computing.
+
+For example (without the linebreak): 
+\begin{verbatim}
+./flagser-count-individ --in-format coo --row ./test/C_row.npy --col ./test/C_col.npy
+--size 5 --threads 2 --vertex 3 --progress
+\end{verbatim}
 
 \end{document}

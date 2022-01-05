@@ -32,6 +32,7 @@ struct parameters_t {
     unsigned short max_dimension = std::numeric_limits<unsigned short>::max()-1;
     unsigned short parallel_threads = 8;
     vertex_index_t number_of_vertices = 0;
+    vertex_index_t initial_vertex = 0;
     unsigned short min_dim_print = 2;                                            //inclusive
     unsigned short max_dim_print = std::numeric_limits<unsigned short>::max()-1; //inclusive
     unsigned short expected_max_dim = 0;
@@ -45,6 +46,7 @@ struct parameters_t {
     bool progress;
     bool type; //stores whether numpy arrays are 64bit (true) or 32bit (false)
     bool vertex_todo_type;
+    bool initial_vertex_input = false;
     bool transpose;
     int64_t euler_characteristic = 0;
     bool compressed;
@@ -85,6 +87,7 @@ struct parameters_t {
         auto it_max_dim_print = named_arguments.find("max-dim-print");
         auto it_min_dim_print = named_arguments.find("min-dim-print");
         auto it_exp_max_dim = named_arguments.find("est-max-dim");
+        auto it_initial_vert = named_arguments.find("vertex");
         named_arguments_t::const_iterator it;
 
         //Arguments with no additional data are given true if they are inputted, otherwise false
@@ -102,6 +105,7 @@ struct parameters_t {
         if (it_max_dim_print != named_arguments.end()) { max_dim_print = atoi(it_max_dim_print->second); }
         if (it_min_dim_print != named_arguments.end()) { min_dim_print = atoi(it_min_dim_print->second); }
         if (it_exp_max_dim != named_arguments.end()) { expected_max_dim = atoi(it_exp_max_dim->second)+1; }
+        if (it_initial_vert != named_arguments.end()) { initial_vertex = atoi(it_initial_vert->second); initial_vertex_input = true; }
 
         //input format arguments
         if (it_format != named_arguments.end()) { input_format = it_format->second; }
