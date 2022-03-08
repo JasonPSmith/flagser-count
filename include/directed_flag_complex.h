@@ -44,17 +44,16 @@ public:
     void worker_thread_individ(int thread_id, vertex_index_t the_vertex,
                                std::vector<vertex_index_t>& do_vertices, std::vector<vertex_index_t>& neigh) {
 
-        std::vector<vertex_index_t> second_position_vertices;
-        for (auto i : do_vertices){
-            std::vector<vertex_index_t> prefix = {the_vertex, i};
+        for (vertex_index_t index = thread_id; index < do_vertices.size(); index += parameters.parallel_threads){
+            std::vector<vertex_index_t> prefix = {the_vertex, do_vertices[index]};
             std::vector<vertex_index_t> new_possible_vertices;
             for (auto v : neigh) {
-                if (i != v && graph.is_connected_by_an_edge(i, v)) {
+                if (do_vertices[index] != v && graph.is_connected_by_an_edge(do_vertices[index], v)) {
                     new_possible_vertices.push_back(v);
                 }
             }
-            do_for_each_cell(new_possible_vertices, prefix, 2, thread_id, neigh.size());
-            print_status(0, i, thread_id, neigh.size());
+            do_for_each_cell(new_possible_vertices, prefix, 2, thread_id, do_vertices.size());
+            print_status(0, do_vertices[index], thread_id, do_vertices.size());
         }
     }
 
