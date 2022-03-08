@@ -15,18 +15,19 @@ template <typename T,typename F> void count_cells(T& graph, parameters_t& parame
     std::vector<std::thread> t(parameters.parallel_threads - 1);
 
     std::vector<vertex_index_t> neighbours;
+    std::vector<vertex_index_t>& do_verts = neighbours;
+    complex.get_new_possible_vertex(parameters.initial_vertex, neighbours);
+
     if (parameters.vertex_todo != "all") {
         cnpy::NpyArray skip_file = cnpy::npy_load(parameters.vertex_todo);
-        if(parameters.vertex_todo_type) neighbours = skip_file.as_vec<uint64_t>();
+        if(parameters.vertex_todo_type) do_verts = skip_file.as_vec<uint64_t>();
         else { std::cerr << "ERROR: vertices_todo must be uint64" << std::endl; exit(-1); }
-    } else{
-        complex.get_new_possible_vertex(parameters.initial_vertex, neighbours);
     }
 
     for (size_t index = 0; index < parameters.parallel_threads - 1; ++index){
-        t[index] = std::thread(&directed_flag_complex_t::worker_thread_individ, complex, index, parameters.initial_vertex, std::ref(neighbours));
+        t[index] = std::thread(&directed_flag_complex_t::worker_thread_individ, complex, index, parameters.initial_vertex, std::ref(do_verts), std::ref(neighbours));
     }
-    complex.worker_thread_individ(parameters.parallel_threads - 1, parameters.initial_vertex, neighbours); // Also do work in this thread, namely the last bit
+    complex.worker_thread_individ(parameters.parallel_threads - 1, parameters.initial_vertex, do_verts, neighbours); // Also do work in this thread, namely the last bit
     for (size_t i = 0; i < parameters.parallel_threads - 1; ++i) t[i].join(); // Wait until all threads stopped
 
     std::cout << "Printing Results." << std::endl;
