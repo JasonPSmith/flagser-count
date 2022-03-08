@@ -15,13 +15,15 @@ template <typename T,typename F> void count_cells(T& graph, parameters_t& parame
     std::vector<std::thread> t(parameters.parallel_threads - 1);
 
     std::vector<vertex_index_t> neighbours;
-    std::vector<vertex_index_t>& do_verts = neighbours;
     complex.get_new_possible_vertex(parameters.initial_vertex, neighbours);
+    std::vector<vertex_index_t> do_verts;
 
     if (parameters.vertex_todo != "all") {
         cnpy::NpyArray skip_file = cnpy::npy_load(parameters.vertex_todo);
         if(parameters.vertex_todo_type) do_verts = skip_file.as_vec<uint64_t>();
         else { std::cerr << "ERROR: vertices_todo must be uint64" << std::endl; exit(-1); }
+    } else {
+        do_verts = neighbours;
     }
 
     for (size_t index = 0; index < parameters.parallel_threads - 1; ++index){
