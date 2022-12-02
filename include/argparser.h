@@ -19,7 +19,6 @@ const named_arguments_t parse_arguments(int argc, char** argv) {
             named_arguments.insert(std::make_pair(arg, "true"));
             continue;
         }
-
         named_arguments.insert(std::make_pair(arg, argv[++i]));  // We have extra data, so parse it
     }
 
@@ -36,10 +35,12 @@ struct parameters_t {
     unsigned short min_dim_print = 2;                                            //inclusive
     unsigned short max_dim_print = std::numeric_limits<unsigned short>::max()-1; //inclusive
     unsigned short expected_max_dim = 0;
+    unsigned short number_of_edges = 0;
     size_t vertices_completed = 0;
     bool print_simplices = false;
     bool print_binary = false;
     bool print_containment = false;
+    bool print_edge_containment = false;
     bool max_simplices = false;
     bool print_to_file = false;
     bool return_simplices = false;
@@ -54,9 +55,11 @@ struct parameters_t {
 
     //input output elements
     std::ofstream containment_outstream;
+    std::ofstream edge_containment_outstream;
     std::vector<std::ofstream> simplices_outstreams;
     std::vector<std::fstream> binary_outstreams;
     std::vector<std::vector<std::vector<vertex_index_t>>> contain_counts;
+    std::vector<std::vector<std::vector<vertex_index_t>>> edge_contain_counts;
     std::vector<std::vector<vertex_index_t>> cell_counts;
     std::vector<std::vector<vertex_index_t>> max_cell_counts;
     std::vector<std::vector<std::vector<std::vector<vertex_index_t>>>> simplex_lists;
@@ -68,6 +71,7 @@ struct parameters_t {
     std::string output_address;
     std::vector<size_t> total_cell_count;
     std::vector<size_t> total_max_cell_count;
+    std::map<std::pair<vertex_index_t,vertex_index_t>,vertex_index_t> edge_dict;
 
 
     //Constructor
@@ -84,6 +88,8 @@ struct parameters_t {
         auto it_binary = named_arguments.find("binary");
         auto it_print = named_arguments.find("print");
         auto it_contain = named_arguments.find("containment");
+        auto it_edges = named_arguments.find("edges");
+        auto it_edge_contain = named_arguments.find("edge-containment");
         auto it_max_dim_print = named_arguments.find("max-dim-print");
         auto it_min_dim_print = named_arguments.find("min-dim-print");
         auto it_exp_max_dim = named_arguments.find("est-max-dim");
@@ -106,6 +112,7 @@ struct parameters_t {
         if (it_min_dim_print != named_arguments.end()) { min_dim_print = atoi(it_min_dim_print->second); }
         if (it_exp_max_dim != named_arguments.end()) { expected_max_dim = atoi(it_exp_max_dim->second)+1; }
         if (it_initial_vert != named_arguments.end()) { initial_vertex = atoi(it_initial_vert->second); initial_vertex_input = true; }
+        if (it_edges != named_arguments.end()) { number_of_edges = atoi(it_edges->second); }
 
         //input format arguments
         if (it_format != named_arguments.end()) { input_format = it_format->second; }
@@ -197,6 +204,17 @@ struct parameters_t {
             print_containment = true;
             if(!python){ containment_outstream = std::ofstream(it_contain->second); }
         }
+        if (it_edge_contain != named_arguments.end()) {
+            if (it_edges == named_arguments.end()) {
+                std::cerr << "ERROR: Number of edges must be inputed with \"--edges n\" when using --edge-containment" << std::endl;exit(-1);
+            }
+            if (input_format == "csc" || input_format == "csr"){
+                std::cerr << "ERROR: Edge containment does not work with compressed format" << std::endl;exit(-1);
+            }
+            edge_contain_counts.assign(parallel_threads, std::vector<std::vector<vertex_index_t>>(number_of_edges, std::vector<vertex_index_t>(expected_max_dim)));
+            print_edge_containment = true;
+            if(!python){ edge_containment_outstream = std::ofstream(it_edge_contain->second); }
+        }
         cell_counts.assign(parallel_threads, std::vector<vertex_index_t>(expected_max_dim));
         if (max_simplices) { max_cell_counts.assign(parallel_threads, std::vector<vertex_index_t>(expected_max_dim)); }
     } //end constructor
@@ -240,6 +258,27 @@ struct parameters_t {
                     containment_outstream << contain_counts[0][i][j] << " ";
                 }
                 containment_outstream << std::endl;
+            }
+        }
+    }
+    void output_edge_containment(){
+        //combine results from different threads and put in contain_counts[0]
+        for(int i = 1; i < edge_contain_counts.size(); i++){
+            for(int j = 0; j < edge_contain_counts[i].size(); j++){
+                while(edge_contain_counts[0][j].size() < edge_contain_counts[i][j].size()){
+                    edge_contain_counts[0][j].push_back(0);
+                }
+                for(int k = 0; k < edge_contain_counts[i][j].size(); k++){
+                    edge_contain_counts[0][j][k] += edge_contain_counts[i][j][k];
+                }
+            }
+        }
+        //print containment values
+        if(!python){
+            for(auto edge = edge_dict.begin(); edge != edge_dict.end(); edge++){
+                edge_containment_outstream << edge->first.first << " " << edge->first.second << " :";
+                for(auto i : edge_contain_counts[0][edge->second]) edge_containment_outstream << " " << i;
+                edge_containment_outstream << std::endl;
             }
         }
     }

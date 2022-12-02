@@ -40,7 +40,7 @@ public:
         }
     }
 
-    virtual void add_edge(vertex_index_t v, vertex_index_t w) {
+    virtual void add_edge(vertex_index_t v, vertex_index_t w, parameters_t& parameters) {
         if(v >= number_of_vertices || w >= number_of_vertices){
             std::cerr << "ERROR: Edge " << v << " " << w << " can't exist, as largest vertex id is " << number_of_vertices-1 << std::endl;
             exit(-1);
@@ -51,6 +51,10 @@ public:
         if (store_incoming){
             const size_t vv = v >> 6;
             incidence_incoming[w * incidence_row_length + vv] |= 1UL << ((v - (vv << 6)));
+        }
+        if(parameters.print_edge_containment){
+            int k = parameters.edge_dict.size();
+            parameters.edge_dict[std::make_pair(v,w)] = k;
         }
     }
 

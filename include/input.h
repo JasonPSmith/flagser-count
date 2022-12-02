@@ -32,7 +32,7 @@ template <typename T,typename C> void read_graph_csc(T& graph, parameters_t& par
     std::vector<C> indptr = indptr_file.as_vec<C>();
     for(int i = 0; i < indptr.size()-1; i++){
         for(int j = indptr[i]; j < indptr[i+1]; j++){
-            graph.add_edge(indices[j],i);
+            graph.add_edge(indices[j],i,parameters);
         }
     }
 }
@@ -52,7 +52,7 @@ template <typename T,typename C> void read_graph_coo(T& graph, parameters_t& par
         exit(-1);
     }
 
-    for(int i = 0; i < row.size(); i++){ graph.add_edge(row[i],col[i]); }
+    for(int i = 0; i < row.size(); i++){ graph.add_edge(row[i],col[i],parameters); }
 }
 
 //#############################################################################
@@ -76,7 +76,7 @@ template <typename T> void read_graph_flagser(T& graph, parameters_t& parameters
             graph.set_number_of_vertices(split(line, ' ', string_to_uint).size());
         } else {
             std::vector<vertex_index_t> vertices = split(line, ' ', string_to_uint);
-            graph.add_edge(vertices[0], vertices[1]);
+            graph.add_edge(vertices[0], vertices[1], parameters);
         }
     }
 }

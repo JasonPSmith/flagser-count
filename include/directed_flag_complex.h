@@ -60,7 +60,6 @@ public:
     //iterator through cliques finding common neighbours to all current members and adding to clique
     void do_for_each_cell(const std::vector<vertex_index_t>& possible_next_vertices, std::vector<vertex_index_t>& prefix,
                         unsigned short prefix_size, int thread_id, size_t number_of_vertices) {
-
     //Add this simplex to the count
         if (prefix_size > 0) {
             if (possible_next_vertices.size() == 0){
@@ -70,19 +69,20 @@ public:
                         if (parameters.return_simplices) update_simplices(prefix_size, prefix, thread_id);
                         if (parameters.print_binary) output_binary(prefix_size, prefix, thread_id);
                         if (parameters.print_containment) update_containment(prefix_size, prefix, thread_id);
+                        if (parameters.print_edge_containment) update_edge_containment(prefix_size, prefix, thread_id);
                         parameters.increase_max_count(prefix_size, thread_id);
                     }
                 }
             }
             parameters.increase_count(prefix_size, thread_id);
         }
-
         // If we require all simplices printed, then print this simplex now
         if (!parameters.max_simplices){
               if (parameters.print_simplices) write_simplices(prefix_size, prefix, thread_id);
               if (parameters.return_simplices) update_simplices(prefix_size, prefix, thread_id);
               if (parameters.print_binary) output_binary(prefix_size, prefix, thread_id);
               if (parameters.print_containment) update_containment(prefix_size, prefix, thread_id);
+              if (parameters.print_edge_containment) update_edge_containment(prefix_size, prefix, thread_id);
         }
 
         // If this is the last dimension we are interested in, exit this branch
@@ -128,7 +128,7 @@ public:
     }
 
     //Check if current simplex is maximal by checking if it has any common in neighbours
-    // this assumes the simplex is a tail, i.e has no commong out neighbours
+    // this assumes the simplex is a tail, i.e has no common out neighbours
     virtual bool check_is_max(std::vector<vertex_index_t>& prefix) {
         for (size_t p = 0; p < prefix.size(); p++) {
             for (size_t offset = 0; offset < graph.incidence_row_length; offset++) {
@@ -166,6 +166,19 @@ public:
                 parameters.contain_counts[thread_id][prefix[i]].push_back(0);
             }
             parameters.contain_counts[thread_id][prefix[i]][prefix_size-1]++;
+        }
+    }
+
+    //Used when --edge-containment flag is inputted
+    void update_edge_containment(unsigned short prefix_size, std::vector<vertex_index_t>& prefix, int thread_id){
+        for(int i = 0; i < prefix_size-1; i++){
+            for(int j = i+1; j < prefix_size; j++){
+                std::pair<vertex_index_t,vertex_index_t> edge(prefix[i],prefix[j]);
+                while(parameters.edge_contain_counts[thread_id][parameters.edge_dict[edge]].size() < prefix_size){
+                    parameters.edge_contain_counts[thread_id][parameters.edge_dict[edge]].push_back(0);
+                }
+                parameters.edge_contain_counts[thread_id][parameters.edge_dict[edge]][prefix_size-1]++;
+            }
         }
     }
 

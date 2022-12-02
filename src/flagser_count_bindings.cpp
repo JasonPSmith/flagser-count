@@ -19,7 +19,8 @@ PYBIND11_MODULE(pycount, m) {
                                  bool set_max_dim, char* max_dim, bool vertices_todo, char* vertices_address,
                                  bool set_max_dim_print, char* max_dim_print, bool set_min_dim_print, char* min_dim_print,
                                  bool compressed, bool npy, char* indices_address, char* indptr_address,
-                                 std::vector<uint32_t> indices, std::vector<uint32_t> indptr, bool set_est_max_dim, char* est_max_dim) {
+                                 std::vector<uint32_t> indices, std::vector<uint32_t> indptr, bool set_est_max_dim, char* est_max_dim,
+                                 bool edge_containment) {
     // Save std::cout status
     auto cout_buff = std::cout.rdbuf();
 
@@ -30,6 +31,7 @@ PYBIND11_MODULE(pycount, m) {
 
     argv.push_back((char*)"--size");
     char nvs[(((sizeof num_vertices) * CHAR_BIT) + 2)/3 + 2];
+    char noe[(((sizeof edges.size()) * CHAR_BIT) + 2)/3 + 2];
     sprintf(nvs, "%d", num_vertices);
     argv.push_back(nvs);
 
@@ -54,6 +56,13 @@ PYBIND11_MODULE(pycount, m) {
     if (containment){
         argv.push_back((char*)"--containment");
         argv.push_back((char*)"true");
+    }
+    if (edge_containment){
+        argv.push_back((char*)"--edge-containment");
+        argv.push_back((char*)"true");
+        argv.push_back((char*)"--edges");
+        sprintf(noe, "%ld", edges.size());
+        argv.push_back(noe);
     }
     if (return_simplices){
         argv.push_back((char*)"--return_simplices");
@@ -92,8 +101,9 @@ PYBIND11_MODULE(pycount, m) {
     if(!compressed){
         auto graph = directed_graph_t(num_vertices, transpose, max_simplices);
         for (auto& edge : edges) {
-            graph.add_edge(edge[0], edge[1]);
+            graph.add_edge(edge[0], edge[1], parameters);
         }
+
         count_cells<directed_graph_t,directed_flag_complex_t>(graph,parameters);
     } else {
         if(npy){
@@ -115,7 +125,6 @@ PYBIND11_MODULE(pycount, m) {
             }
         }
     }
-
     // Re-enable again cout
     std::cout.rdbuf(cout_buff);
 
@@ -125,7 +134,13 @@ PYBIND11_MODULE(pycount, m) {
     if(parameters.max_simplices){output["max_cell_counts"] = parameters.total_max_cell_count;}
     if(parameters.print_containment){output["contain_counts"] = parameters.contain_counts[0];}
     if(parameters.return_simplices){output["simplices"] = parameters.simplex_lists[0];}
-
+    if(parameters.print_edge_containment){
+        py::dict py_dict_edges;
+        for(auto const& edge : parameters.edge_dict){
+            py_dict_edges[py::make_tuple(edge.first.first,edge.first.second)] = parameters.edge_contain_counts[0][edge.second];
+        }
+        output["edge_contain_counts"] = py_dict_edges;
+    }
     return output;
   });
 }
