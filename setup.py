@@ -28,8 +28,22 @@ class CMakeBuild(build_ext):
             if cmake_version < '3.1.0':
                 raise RuntimeError("CMake >= 3.1.0 is required on Windows")
 
+        self.install_dependencies()
+
         for ext in self.extensions:
             self.build_extension(ext)
+
+    def install_dependencies(self):
+        dir_start = os.getcwd()
+        dir_pybind11 = os.path.join(dir_start, 'pybind11')
+        if os.path.exists(dir_pybind11):
+            return 0
+        os.mkdir(dir_pybind11)
+        subprocess.check_call(['git', 'clone',
+                               'https://github.com/pybind/pybind11.git',
+                               dir_pybind11])
+        subprocess.check_call(['git', 'submodule', 'update',
+                               '--init', '--recursive'])
 
     def build_extension(self, ext):
         extdir = os.path.abspath(os.path.dirname(self.get_ext_fullpath(ext.name)))
