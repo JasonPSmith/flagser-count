@@ -75,10 +75,11 @@ class CMakeBuild(build_ext):
 
 setup(
     name='pyflagsercount',
-    version='0.3.0',
+    version='0.3.1',
     author='Jason P. Smith',
     author_email='jasonsmith.bath@gmail.com',
     description='A package for counting directed cliques in directed graphs',
+    long_description= 'A program for counting directed cliques in directed graphs, adapted from https://github.com/luetge/flagser\n\nA python version called pyflagsercount is available from pypi and can be installed with\n```sh\npip install pyflagsercount\n```\n\nTo install from this repo, first download repository with:\n```sh\ngit clone --recursive https://github.com/JasonPSmith/flagser-count.git\n```\nNext, compile flagser count with\n```\nmake\n```\n\nTo verify that flagser-count has installed correctly run:\n\n```sh\n(cd test && python run_test.py && cd ..)\n```\n\nTo install pyflagsercount run:\n```sh\npip install .\n```\nRequirements: pyflagsercount requries numpy ≥ 1.17.0 and cmake version ≥ 3.9.\n',
     ext_modules=[CMakeExtension('pyflagsercount')],
     cmdclass=dict(build_ext=CMakeBuild),
     packages=["pyflagsercount"],
