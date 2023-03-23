@@ -42,8 +42,7 @@ class CMakeBuild(build_ext):
         subprocess.check_call(['git', 'clone',
                                'https://github.com/pybind/pybind11.git',
                                dir_pybind11])
-        subprocess.check_call(['git', 'submodule', 'update',
-                               '--init', '--recursive'])
+        #subprocess.check_call(['git', 'submodule', 'update', '--init', '--recursive'])
 
     def build_extension(self, ext):
         extdir = os.path.abspath(os.path.dirname(self.get_ext_fullpath(ext.name)))
@@ -76,11 +75,13 @@ class CMakeBuild(build_ext):
 
 setup(
     name='pyflagsercount',
-    version='0.0.5',
+    version='0.3.0',
     author='Jason P. Smith',
-    description='A pybind11 wrapper for a version of flagser-count',
+    author_email='jasonsmith.bath@gmail.com',
+    description='A package for counting directed cliques in directed graphs',
     ext_modules=[CMakeExtension('pyflagsercount')],
     cmdclass=dict(build_ext=CMakeBuild),
     packages=["pyflagsercount"],
+    install_requires=['numpy>=1.17.0'],
     zip_safe=False,
 )
