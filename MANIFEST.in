@@ -1,0 +1,6 @@
+include CMakeLists.txt Makefile README.md
+recursive-include include *
+recursive-include src * 
+recursive-include test * 
+recursive-include scripts * 
+recursive-include docs *
