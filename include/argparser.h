@@ -35,7 +35,7 @@ struct parameters_t {
     unsigned short min_dim_print = 2;                                            //inclusive
     unsigned short max_dim_print = std::numeric_limits<unsigned short>::max()-1; //inclusive
     unsigned short expected_max_dim = 0;
-    unsigned short number_of_edges = 0;
+    index_t number_of_edges = 0;
     size_t vertices_completed = 0;
     bool print_simplices = false;
     bool print_binary = false;
@@ -71,7 +71,7 @@ struct parameters_t {
     std::string output_address;
     std::vector<size_t> total_cell_count;
     std::vector<size_t> total_max_cell_count;
-    std::map<std::pair<vertex_index_t,vertex_index_t>,vertex_index_t> edge_dict;
+    std::map<std::pair<vertex_index_t,vertex_index_t>, index_t> edge_dict;
 
 
     //Constructor
