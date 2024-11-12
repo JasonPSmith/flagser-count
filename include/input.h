@@ -76,7 +76,8 @@ template <typename T> void read_graph_flagser(T& graph, parameters_t& parameters
             graph.set_number_of_vertices(split(line, ' ', string_to_uint).size());
         } else {
             std::vector<vertex_index_t> vertices = split(line, ' ', string_to_uint);
-            graph.add_edge(vertices[0], vertices[1], parameters);
+            if (parameters.undirected && vertices[1] < vertices[0]) { graph.add_edge(vertices[1], vertices[0], parameters); }
+            else { graph.add_edge(vertices[0], vertices[1], parameters); }
         }
     }
 }
