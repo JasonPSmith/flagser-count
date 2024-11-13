@@ -101,6 +101,7 @@ The following \texttt{[options]} exist:
   \item [-{}-est-max-dim] an estimated value for the maximum dimension, giving a good estimate will make the computations slightly faster (particular when using containment or edge-containment).
   \item [-{}-compressed] Enabling this option stores the graph in sparse format, slower performance but significantly less memory required. The graph must be inputted in csr (or csc) format, it is then kept in that format for the computations
   \item [-{}-transpose] transposes the graph
+  \item [-{}-undirected] computes the \emph{undirected} flag complex instead, by reading in every edge as oriented from smallest to largest index. Currently can only be used with \emph{flagser} or \emph{edge-list} format.
   \item [-{}-progress] prints the progress of the computation, every time a vertex is finished being considered as a source it prints the current count of that thread and the vertex considered.
 
 \end{description}

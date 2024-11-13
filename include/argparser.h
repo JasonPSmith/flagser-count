@@ -44,6 +44,7 @@ struct parameters_t {
     bool max_simplices = false;
     bool print_to_file = false;
     bool return_simplices = false;
+    bool undirected = false;
     bool progress;
     bool type; //stores whether numpy arrays are 64bit (true) or 32bit (false)
     bool vertex_todo_type;
@@ -103,6 +104,7 @@ struct parameters_t {
         compressed = ((it = named_arguments.find("compressed")) != named_arguments.end());
         python = ((it = named_arguments.find("python")) != named_arguments.end());
         return_simplices = ((it = named_arguments.find("return_simplices")) != named_arguments.end());
+        undirected = ((it = named_arguments.find("undirected")) != named_arguments.end());
         if(max_simplices) {min_dim_print = 0;}
 
         //integer arguments
@@ -196,6 +198,11 @@ struct parameters_t {
         }
         if (return_simplices) {
             simplex_lists.assign(parallel_threads, std::vector<std::vector<std::vector<vertex_index_t>>>(0));
+        }
+
+        //If --undirected, format must be flagser
+        if (undirected && input_format != "flagser") {
+            std::cerr << "ERROR: Input format must be flagser or edge-list when using --undirected" << std::endl;exit(-1);
         }
 
         //If --containment, set boolean and create vectors to store the counts, one for each thread and each vertex
