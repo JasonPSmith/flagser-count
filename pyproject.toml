@@ -1,0 +1,35 @@
+[build-system]
+requires = ["scikit-build-core>=0.10", "pybind11>=2.12"]
+build-backend = "scikit_build_core.build"
+
+[project]
+name = "pyflagsercount"
+version = "0.5.0"
+description = "A package for counting directed cliques in directed graphs"
+readme = "README.md"
+license = { file = "LICENSE" }
+authors = [{ name = "Jason P. Smith", email = "jasonsmith.bath@gmail.com" }]
+requires-python = ">=3.9"
+dependencies = ["numpy>=1.17.0"]
+
+[project.urls]
+Homepage = "https://github.com/JasonPSmith/flagser-count"
+
+[project.optional-dependencies]
+test = ["pytest"]
+
+[tool.pytest.ini_options]
+python_files = ["run_test.py", "test_*.py"]
+
+[tool.scikit-build]
+minimum-version = "0.10"
+cmake.version = ">=3.15"
+wheel.packages = ["pyflagsercount"]
+
+[tool.cibuildwheel]
+build = ["cp39-*", "cp310-*", "cp311-*", "cp312-*", "cp313-*"]
+skip = ["*-musllinux_*", "*_i686"]
+test-command = 'python -c "import pyflagsercount; import pycount"'
+
+[tool.cibuildwheel.macos]
+archs = ["x86_64", "arm64"]
