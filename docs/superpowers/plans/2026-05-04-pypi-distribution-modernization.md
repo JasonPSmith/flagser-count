@@ -37,14 +37,21 @@ Expected: prints `not present`. If a `pybind11/` directory exists, do NOT delete
 
 ## Phase 1 — Add new build configuration
 
-### Task 1: Create `.gitignore`
+### Task 1: Expand `.gitignore`
 
 **Files:**
-- Create: `.gitignore`
+- Modify: `.gitignore`
 
-- [ ] **Step 1: Write `.gitignore`**
+The repo already has a one-line `.gitignore` containing `.worktrees/` (added before this branch was cut, to keep the worktree directory out of git). Preserve that line and add the python/build entries on top.
 
-Create `.gitignore` with this exact content:
+- [ ] **Step 1: Confirm starting content**
+
+Run: `cat .gitignore`
+Expected: a single line `.worktrees/`. If you see anything else, stop and report.
+
+- [ ] **Step 2: Overwrite `.gitignore` with the expanded version**
+
+Replace the file with this exact content (note: `.worktrees/` is preserved at the bottom):
 
 ```
 # Build / packaging outputs
@@ -70,18 +77,26 @@ venv/
 
 # macOS
 .DS_Store
+
+# Worktrees (subagent-driven development)
+.worktrees/
 ```
 
-- [ ] **Step 2: Verify the file**
+- [ ] **Step 3: Verify the file**
 
-Run: `cat .gitignore | head -1`
-Expected: `# Build / packaging outputs`
+Run: `head -1 .gitignore && tail -1 .gitignore`
+Expected:
 
-- [ ] **Step 3: Commit**
+```
+# Build / packaging outputs
+.worktrees/
+```
+
+- [ ] **Step 4: Commit**
 
 ```bash
 git add .gitignore
-git commit -m "build: add .gitignore for python/build artifacts"
+git commit -m "build: expand .gitignore for python/build artifacts"
 ```
 
 ---
