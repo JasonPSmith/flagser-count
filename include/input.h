@@ -66,7 +66,7 @@ template <typename T> void read_graph_flagser(T& graph, parameters_t& parameters
 
     //If a dim 0 is in the file take the next line and use it to get the number of vertices
     //Otherwise take each line to be an edge.
-    while (not input_stream.eof()) {
+    while (!input_stream.eof()) {
         getline(input_stream, line);
         line = trim(line);
         if (line.length() == 0) continue;
