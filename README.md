@@ -1,28 +1,44 @@
 # flagser-count
-A program for counting directed cliques in directed graphs, adapted from https://github.com/luetge/flagser
 
-A python version called pyflagsercount is available from pypi and can be installed with
+A program for counting directed cliques in directed graphs, adapted from https://github.com/luetge/flagser.
+
+## Python package (pyflagsercount)
+
 ```sh
-pip install pyflagsercount
+pip install pyflagsercount               # from PyPI (once published)
+pip install .                            # from a local checkout
+pip install git+https://github.com/JasonPSmith/flagser-count.git
 ```
 
-To install from this repo, first download repository with:
+Python ≥ 3.9. Source installs need a C++ compiler; CMake ≥ 3.15 is fetched automatically by the build frontend if not already present. Pre-built wheels are produced by CI for Linux x86_64, macOS arm64, macOS x86_64, and Windows x64 across CPython 3.9–3.13.
+
+### Testing
+
+```sh
+pip install -e .[test]
+(cd test && python run_test.py)
+```
+
+The test runner shells out to the standalone `flagser-count` binary, so build it first with `make` (see below) before running.
+
+## Standalone CLI (flagser-count, flagser-count-individ)
+
+To build the C++ command-line binaries, clone with submodules and run `make`:
+
 ```sh
 git clone --recursive https://github.com/JasonPSmith/flagser-count.git
-```
-Next, compile flagser count with
-```
+cd flagser-count
 make
 ```
 
-To verify that flagser-count has installed correctly run:
+This produces `./flagser-count` and `./flagser-count-individ` in the repo root. Requirements: a C++14 compiler with `-pthread` support (gcc ≥ 6.4 on Linux).
+
+To verify the CLI:
 
 ```sh
-(cd test && python run_test.py && cd ..)
+(cd test && python run_test.py)
 ```
 
-To install pyflagsercount run:
-```sh
-pip install .
-```
-Requirements: For pyflagsercount the packages numpy and pybind11 are required, and cmake version ≥ 2.8.12.
+## License
+
+See [LICENSE](LICENSE).
