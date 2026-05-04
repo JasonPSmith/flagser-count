@@ -23,10 +23,10 @@ The test runner shells out to the standalone `flagser-count` binary, so build it
 
 ## Standalone CLI (flagser-count, flagser-count-individ)
 
-To build the C++ command-line binaries, clone with submodules and run `make`:
+To build the C++ command-line binaries, clone the repo and run `make`:
 
 ```sh
-git clone --recursive https://github.com/JasonPSmith/flagser-count.git
+git clone https://github.com/JasonPSmith/flagser-count.git
 cd flagser-count
 make
 ```
