@@ -9,6 +9,7 @@
 #include <fstream>
 #include <vector>
 #include <thread>
+#include <mutex>
 #include <functional>
 #include <deque>
 #include <sstream>
@@ -19,7 +20,6 @@
 #include <cstdio>
 #include <typeinfo>
 #include <cassert>
-#include <zlib.h>
 #include <map>
 #include <memory>
 #include <stdint.h>
@@ -48,18 +48,16 @@ typedef float value_t;
 //##############################################################################
 // Class for thread safe printing
 class LockIO {
-    static pthread_mutex_t *mutex;
+    static std::mutex& mutex();
+    std::lock_guard<std::mutex> guard;
     public:
-        LockIO() { pthread_mutex_lock( mutex ); }
-        ~LockIO() { pthread_mutex_unlock( mutex ); }
+        LockIO() : guard(mutex()) {}
 };
 
-static pthread_mutex_t* getMutex() {
-    pthread_mutex_t *mutex = new pthread_mutex_t;
-    pthread_mutex_init( mutex, NULL );
-    return mutex;
+inline std::mutex& LockIO::mutex() {
+    static std::mutex m;
+    return m;
 }
-pthread_mutex_t* LockIO::mutex = getMutex();
 
 
 #endif // FLAGSER_DEFINITIONS_H
