@@ -10,10 +10,15 @@
 #include <vector>
 #include <thread>
 #include <mutex>
+#include <bitset>
 #include <functional>
 #include <deque>
 #include <sstream>
 #include <cmath>
+
+#if defined(_MSC_VER)
+#include <intrin.h>
+#endif
 
 // Libraries needed for cnpy
 #include <stdexcept>
@@ -57,6 +62,18 @@ class LockIO {
 inline std::mutex& LockIO::mutex() {
     static std::mutex m;
     return m;
+}
+
+//##############################################################################
+// Portable count-trailing-zeros for a 64-bit value.
+inline int count_trailing_zeros_u64(uint64_t x) {
+#if defined(_MSC_VER)
+    unsigned long idx;
+    _BitScanForward64(&idx, x);
+    return static_cast<int>(idx);
+#else
+    return __builtin_ctzll(x);
+#endif
 }
 
 
