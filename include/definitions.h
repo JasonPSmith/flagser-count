@@ -9,17 +9,22 @@
 #include <fstream>
 #include <vector>
 #include <thread>
+#include <mutex>
+#include <bitset>
 #include <functional>
 #include <deque>
 #include <sstream>
 #include <cmath>
+
+#if defined(_MSC_VER)
+#include <intrin.h>
+#endif
 
 // Libraries needed for cnpy
 #include <stdexcept>
 #include <cstdio>
 #include <typeinfo>
 #include <cassert>
-#include <zlib.h>
 #include <map>
 #include <memory>
 #include <stdint.h>
@@ -48,18 +53,28 @@ typedef float value_t;
 //##############################################################################
 // Class for thread safe printing
 class LockIO {
-    static pthread_mutex_t *mutex;
+    static std::mutex& mutex();
+    std::lock_guard<std::mutex> guard;
     public:
-        LockIO() { pthread_mutex_lock( mutex ); }
-        ~LockIO() { pthread_mutex_unlock( mutex ); }
+        LockIO() : guard(mutex()) {}
 };
 
-static pthread_mutex_t* getMutex() {
-    pthread_mutex_t *mutex = new pthread_mutex_t;
-    pthread_mutex_init( mutex, NULL );
-    return mutex;
+inline std::mutex& LockIO::mutex() {
+    static std::mutex m;
+    return m;
 }
-pthread_mutex_t* LockIO::mutex = getMutex();
+
+//##############################################################################
+// Portable count-trailing-zeros for a 64-bit value.
+inline int count_trailing_zeros_u64(uint64_t x) {
+#if defined(_MSC_VER)
+    unsigned long idx;
+    _BitScanForward64(&idx, x);
+    return static_cast<int>(idx);
+#else
+    return __builtin_ctzll(x);
+#endif
+}
 
 
 #endif // FLAGSER_DEFINITIONS_H
