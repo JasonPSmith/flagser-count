@@ -1,0 +1,26 @@
+# Build / packaging outputs
+build/
+dist/
+wheelhouse/
+*.egg-info/
+
+# Compiled extension from in-place builds
+*.so
+
+# Python bytecode
+__pycache__/
+*.py[cod]
+
+# Virtual environments
+.venv/
+venv/
+
+# IDE
+.idea/
+.vscode/
+
+# macOS
+.DS_Store
+
+# Worktrees (subagent-driven development)
+.worktrees/

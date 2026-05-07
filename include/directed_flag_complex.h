@@ -120,8 +120,8 @@ public:
 
             size_t vertex_offset = offset << 6;
             while (bits > 0) {
-                int b = __builtin_ctzl(bits);  // Get the least significant non-zero bit
-                bits &= ~(1UL << b);           // Unset this bit
+                int b = count_trailing_zeros_u64(static_cast<uint64_t>(bits));  // Get the least significant non-zero bit
+                bits &= ~(1ULL << b);           // Unset this bit
                 new_possible_vertices.push_back(vertex_offset + b);
             }
         }
