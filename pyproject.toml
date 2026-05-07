@@ -4,7 +4,7 @@ build-backend = "scikit_build_core.build"
 
 [project]
 name = "pyflagsercount"
-version = "0.2.0" # Update this version number when making a new release 0.5.0 is the first release on PyPI, but there are some pre-releases before that
+version = "0.5.0" # Update this version number when making a new release 0.5.0 is the first release on PyPI, but there are some pre-releases before that
 description = "A package for counting directed cliques in directed graphs"
 readme = "README.md"
 license = { file = "LICENSE" }
