@@ -31,5 +31,9 @@ build = ["cp39-*", "cp310-*", "cp311-*", "cp312-*", "cp313-*"]
 skip = ["*-musllinux_*", "*_i686", "*-win32"]
 test-command = 'python -c "import pyflagsercount; import pycount"'
 
+[tool.cibuildwheel.linux]
+manylinux-x86_64-image = "manylinux_2_28"
+manylinux-aarch64-image = "manylinux_2_28"
+
 [tool.cibuildwheel.macos]
 archs = ["x86_64", "arm64"]
